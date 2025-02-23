@@ -14,15 +14,15 @@
 namespace nycatech::render {
 
 struct Vertex {
-  std::array<float, 3> position;
-  std::array<float, 3> normal;
-  std::array<float, 2> textCord;
+  Array<Float32, 3> position;
+  Array<Float32, 3> normal;
+  Array<Float32, 2> textCord;
 };
 
-class Mesh {
+class Mesh : public Component {
  public:
-  static Mesh* FromFile(const char* path);
-  static Mesh* FromStream(const std::istream& stream);
+  static SmartPtr<Mesh> FromFile(const char* path);
+  static SmartPtr<Mesh> FromString(const StringBuilder& stream);
 
  public:
   Vector<Vertex> vertices;
@@ -30,9 +30,9 @@ class Mesh {
   Uint32 vbo;
 
  private:
-  static Mesh* LoadData(const tinyobj::attrib_t& attrib, const std::vector<tinyobj::shape_t>& shapes);
+  static SmartPtr<Mesh> LoadData(const tinyobj::attrib_t& attrib, const std::vector<tinyobj::shape_t>& shapes);
 
- private:
+ public:
   Mesh() = default;
   ~Mesh() = default;
 

@@ -1,278 +1,143 @@
-//
-// Created by rplaz on 2025-02-01.
-//
+#ifndef NYCA_TECH_GAME_VECTOR_H
+#define NYCA_TECH_GAME_VECTOR_H
 
-#ifndef NYCA_TECH_VECTOR_H
-#define NYCA_TECH_VECTOR_H
-
-#include <functional>
-#include <vector>
+#include <cstring>
+#include <utility>
 
 #include "base.h"
 
 namespace nycatech {
 
-template <typename T>
+template <typename T, Uint64 InlineCapacity = 16>
 class Vector {
  public:
-  INLINE explicit Vector(Uint64 count = 0);
-  INLINE explicit Vector(std::initializer_list<T> init);
-
-  INLINE Vector(Vector&& other);
-  INLINE Vector(const Vector& other);
-
+  INLINE Vector();
   INLINE ~Vector();
 
-  INLINE Vector& operator=(Vector&& other);
-  INLINE Vector& operator=(const Vector& other);
-  INLINE Vector& operator=(std::vector<T>);
-
- public:
-  INLINE bool Resize(Uint64 newSize);
-  INLINE bool Insert(const T& element);
-  INLINE bool At(Uint64 index, T* elem) const;
-  INLINE bool At(Uint64 index, T** elem) const;
-  INLINE bool Emplace(Uint64 index, const T& elem);
-  INLINE bool AdjustSize();
+  INLINE void PushBack(const T& element);
+  INLINE void PushBack(T&& element);
+  INLINE bool PopBack();
   INLINE T& operator[](Uint64 index);
   INLINE const T& operator[](Uint64 index) const;
-  INLINE Uint64 Capacity() const;
-  INLINE Uint64& CountMut();
-  INLINE Uint64 Count() const;
-  INLINE void OverrideCount(Uint64 newSize);
-  INLINE T* Data();
-  INLINE const T* Data() const;
-  INLINE bool Contains(const T& other) const;
-  INLINE bool Contains(std::function<bool(const T&)>) const;
+  INLINE Uint64 Size() const;
+  INLINE Uint64 Allocated() const;
   INLINE bool IsEmpty() const;
-  INLINE Int32 ElemSize() const;
+  INLINE void Clear();
 
- public:
-  INLINE T* begin();
-  INLINE const T* begin() const;
-  INLINE T* end();
-  INLINE const T* end() const;
+  INLINE T* Data() { return data; }
+  INLINE const T* Data() const { return data; }
+
+  INLINE T* begin() { return data; }
+  INLINE T* end() { return data + size; }
+
+  INLINE const T* begin() const { return data; }
+  INLINE const T* end() const { return data + size; }
+
+  INLINE void GrowToSize(Uint64 newSize);
 
  private:
-  T* data;
-  Uint64 count;
+  INLINE void Grow();
+
+ private:
   Uint64 size;
+  Uint64 capacity;
+  T* data;
+  alignas(T) char inlineStorage[sizeof(T) * InlineCapacity];
 };
 
-template <typename T>
-INLINE Vector<T>::~Vector() {
-  delete[] data;
-  data = nullptr;
-}
+template <typename T, Uint64 InlineCapacity>
+INLINE Vector<T, InlineCapacity>::Vector()
+    : size(0), capacity(InlineCapacity), data(reinterpret_cast<T*>(inlineStorage)) {}
 
-template <typename T>
-INLINE Vector<T>::Vector(Uint64 initCount)
-    : size(initCount), count(initCount), data(new T[initCount]) {}
-
-template <typename T>
-Vector<T>::Vector(std::initializer_list<T> init) : data(nullptr), count(0), size(0) {
-  for (const auto& elem : init) {
-    this->Insert(elem);
+template <typename T, Uint64 InlineCapacity>
+INLINE Vector<T, InlineCapacity>::~Vector() {
+  Clear();
+  if (data != reinterpret_cast<T*>(inlineStorage)) {
+    delete[] data;
   }
 }
 
-template <typename T>
-Vector<T>::Vector(Vector&& other) : data(other.data), count(other.count), size(other.size) {
-  other.data = nullptr;
-  other.count = 0;
-  other.size = 0;
-}
-
-template <typename T>
-Vector<T>::Vector(const Vector& other) : data(new T[other.size]), count(other.count), size(other.size) {
-  std::copy(other.data, other.data + other.count, data);
-}
-
-template <typename T>
-Vector<T>& Vector<T>::operator=(Vector&& other) {
-  if (this == &other) return *this;
-  delete[] data;
-  data = other.data;
-  count = other.count;
-  size = other.size;
-  other.data = nullptr;
-  other.size = 0;
-  other.count = 0;
-  return *this;
-}
-
-template <typename T>
-Vector<T>& Vector<T>::operator=(const Vector& other) {
-  if (this == &other) return *this;
-  delete[] data;
-  data = new T[other.size];
-  std::copy(other.data, other.data + other.count, data);
-  size = other.size;
-  count = other.count;
-  return *this;
-}
-
-template <typename T>
-Vector<T>& Vector<T>::operator=(std::vector<T> other) {
-  delete[] data;
-  data = new T[other.capacity()];
-  std::copy(other.begin(), other.end(), data);
-  count = other.size();
-  size = other.capacity();
-  return *this;
-}
-
-template <typename T>
-INLINE bool Vector<T>::Insert(const T& element) {
-  if (count >= size) {
-    const Uint64 newCapacity = size * 1.62;
-    if (!Resize(newCapacity + (16 - (newCapacity % 16)))) return false;
+template <typename T, Uint64 InlineCapacity>
+INLINE void Vector<T, InlineCapacity>::PushBack(const T& element) {
+  if (size >= capacity) {
+    Grow();
   }
-  new (&data[count]) T(element);
-  count++;
-  return true;
+  new (&data[size]) T(element);
+  size++;
 }
 
-template <typename T>
-INLINE bool Vector<T>::At(Uint64 index, T* elem) const {
-  if (index >= count) {
-    return false;
+template <typename T, Uint64 InlineCapacity>
+INLINE void Vector<T, InlineCapacity>::PushBack(T&& element) {
+  if (size >= capacity) {
+    Grow();
   }
-
-  *elem = data[index];
-  return true;
+  new (&data[size]) T(std::move(element));
+  size++;
 }
 
-template <typename T>
-bool Vector<T>::At(Uint64 index, T** elem) const {
-  if (index >= count) {
-    return false;
+template <typename T, Uint64 InlineCapacity>
+INLINE bool Vector<T, InlineCapacity>::PopBack() {
+  if (size > 0) {
+    size--;
+    data[size].~T();
+    return true;
   }
-
-  *elem = &data[index];
-  return true;
+  return false;
 }
 
-template <typename T>
-bool Vector<T>::Emplace(Uint64 index, const T& elem) {
-  if (index >= count) {
-    return false;
-  }
-  data[index] = elem;
-  return true;
-}
-
-template <typename T>
-bool Vector<T>::AdjustSize() {
-  return Resize(count);
-}
-
-template <typename T>
-T& Vector<T>::operator[](Uint64 index) {
+template <typename T, Uint64 InlineCapacity>
+INLINE T& Vector<T, InlineCapacity>::operator[](Uint64 index) {
   return data[index];
 }
 
-template <typename T>
-const T& Vector<T>::operator[](Uint64 index) const {
+template <typename T, Uint64 InlineCapacity>
+INLINE const T& Vector<T, InlineCapacity>::operator[](Uint64 index) const {
   return data[index];
 }
 
-template <typename T>
-Uint64 Vector<T>::Capacity() const {
+template <typename T, Uint64 InlineCapacity>
+INLINE Uint64 Vector<T, InlineCapacity>::Size() const {
   return size;
 }
 
-template <typename T>
-Uint64 Vector<T>::Count() const {
-  return count;
+template <typename T, Uint64 InlineCapacity>
+INLINE Uint64 Vector<T, InlineCapacity>::Allocated() const {
+  return capacity;
 }
 
-template <typename T>
-void Vector<T>::OverrideCount(Uint64 newSize) {
-  count = newSize;
+template <typename T, Uint64 InlineCapacity>
+INLINE bool Vector<T, InlineCapacity>::IsEmpty() const {
+  return size == 0;
 }
 
-template <typename T>
-Uint64& Vector<T>::CountMut() {
-  return count;
-}
-
-template <typename T>
-T* Vector<T>::Data() {
-  return data;
-}
-
-template <typename T>
-const T* Vector<T>::Data() const {
-  return data;
-}
-
-template <typename T>
-bool Vector<T>::Contains(const T& other) const {
-  for (Int32 i = 0; i < count; i++) {
-    if (data[i] == other) {
-      return true;
-    }
+template <typename T, Uint64 InlineCapacity>
+INLINE void Vector<T, InlineCapacity>::Clear() {
+  for (Uint64 i = 0; i < size; ++i) {
+    data[i].~T();
   }
-  return false;
+  size = 0;
 }
 
-template <typename T>
-bool Vector<T>::Contains(std::function<bool(const T&)> found) const {
-  for (Int32 i = 0; i < count; i++) {
-    if (found(data[i])) {
-      return true;
-    }
+template <typename T, Uint64 InlineCapacity>
+INLINE void Vector<T, InlineCapacity>::Grow() {
+  const Uint64 newCapacity = (size + 1) * 1.62;
+  GrowToSize(newCapacity + (16 - (newCapacity % 16)));
+}
+
+template <typename T, Uint64 InlineCapacity>
+void Vector<T, InlineCapacity>::GrowToSize(Uint64 newSize) {
+  T* newData = reinterpret_cast<T*>(new char[newSize * sizeof(T)]);
+  for (Uint64 i = 0; i < size; ++i) {
+    new (&newData[i]) T(std::move(data[i]));
+    data[i].~T();
   }
-  return false;
-}
-
-template <typename T>
-bool Vector<T>::IsEmpty() const {
-  return count <= 0;
-}
-
-template <typename T>
-Int32 Vector<T>::ElemSize() const {
-  return sizeof(T);
-}
-
-template <typename T>
-T* Vector<T>::begin() {
-  return data;
-}
-
-template <typename T>
-const T* Vector<T>::begin() const {
-  return data;
-}
-
-template <typename T>
-T* Vector<T>::end() {
-  return data + count;
-}
-
-template <typename T>
-const T* Vector<T>::end() const {
-  return data + count;
-}
-
-template <typename T>
-INLINE bool Vector<T>::Resize(const Uint64 newSize) {
-  if (newSize < count) {
-    return false;
+  if (data != reinterpret_cast<T*>(inlineStorage)) {
+    delete[] reinterpret_cast<char*>(data);
   }
-  if (newSize == size) {
-    return true;
-  }
-  T* newData = new T[newSize];
-  std::copy(data, data + count, newData);
-  delete[] data;
   data = newData;
-  size = newSize;
-  return true;
+  capacity = newSize;
 }
 
 }  // namespace nycatech
 
-#endif  // NYCA_TECH_VECTOR_H
+#endif  // NYCA_TECH_GAME_VECTOR_H

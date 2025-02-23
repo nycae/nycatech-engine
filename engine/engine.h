@@ -5,17 +5,14 @@
 #ifndef NYCA_TECH_ENGINE_H
 #define NYCA_TECH_ENGINE_H
 
+#include "library/ecs.h"
+#include "library/package.h"
 #include "library/vector.h"
 #include "renderer/mesh.h"
-#include "renderer/model.h"
-#include "library/package.h"
 #include "renderer/renderer.h"
+#include "library/hash_map.h"
 
 namespace nycatech {
-
-using render::Model;
-using render::Mesh;
-using render::Renderer;
 
 class Application {
  public:
@@ -25,11 +22,7 @@ class Application {
   void Run();
 
  private:
-  Vector<Mesh *> meshes;
-  Model greenSuzane;
-  Model redSuzane;
-  Model blueSuzane;
-  Renderer context;
+  World world;
   SDL_Event event;
 };
 
