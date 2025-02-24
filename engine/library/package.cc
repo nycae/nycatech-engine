@@ -9,63 +9,63 @@
 
 namespace nycatech {
 
-void Package::AddAsset(const String& file) { assets.PushBack(file); }
+void Package::add_asset(const String& file) { assets.push_back(file); }
 
-void Package::Bundle(const String& file) {
-  FileWritter outFile(file.c_str(), std::ios::binary);
+void Package::bundle(const String& file) {
+  FileWritter out_file(file.c_str(), std::ios::binary);
   ZSTD_CCtx* ctx = ZSTD_createCCtx();
 
-  Vector<char> outBuffer;
-  outBuffer.GrowToSize(ZSTD_compressBound(SizeBuffer));
+  Vector<char> out_buff;
+  out_buff.resize(ZSTD_compressBound(size_buffer));
 
-  for (const auto& assetFile : assets) {
-    FileReader inFile(assetFile.c_str(), std::ios::binary);
+  for (const auto& asset_file : assets) {
+    FileReader in_file(asset_file.c_str(), std::ios::binary);
     StringBuilder buffer;
-    buffer << inFile.rdbuf();
+    buffer << in_file.rdbuf();
     String data = buffer.str();
-    inFile.close();
-    Uint64 sizeCompressed = ZSTD_compressCCtx(
-        ctx, outBuffer.Data(), outBuffer.Allocated(), data.data(), data.size(), ZSTD_defaultCLevel());
-    outFile.write(reinterpret_cast<const char*>(&sizeCompressed), sizeof(sizeCompressed));
-    outFile.write(outBuffer.Data(), sizeCompressed);
+    in_file.close();
+    Uint64 size_compressed
+        = ZSTD_compressCCtx(ctx, out_buff.data(), out_buff.capacity(), data.data(), data.size(), ZSTD_defaultCLevel());
+    out_file.write(reinterpret_cast<const char*>(&size_compressed), sizeof(size_compressed));
+    out_file.write(out_buff.data(), size_compressed);
   }
 
-  outFile.close();
+  out_file.close();
   ZSTD_freeCCtx(ctx);
 }
 
-Uint64 Package::SizeOfFiles() {
+Uint64 Package::size_of_files() {
   Uint64 size = 0;
-  for (const auto& assetFile : assets) {
-    FILE* const inputFile = fopen(assetFile.c_str(), "rb");
-    fseek(inputFile, 0, SEEK_END);
-    size += ftell(inputFile);
-    fclose(inputFile);
+  for (const auto& asset_file : assets) {
+    FILE* const input_file = fopen(asset_file.c_str(), "rb");
+    fseek(input_file, 0, SEEK_END);
+    size += ftell(input_file);
+    fclose(input_file);
   }
 
   return size;
 }
 
-void Package::LoadFrom(const String& file) {
-  FileReader inFile(file.c_str(), std::ios::binary);
+void Package::load_from(const String& file) {
+  FileReader in_file(file.c_str(), std::ios::binary);
   ZSTD_DCtx* const ctx = ZSTD_createDCtx();
-  Vector<char> outBuffer;
-  outBuffer.GrowToSize(SizeBuffer);
+  Vector<char> out_buffer;
+  out_buffer.resize(size_buffer);
 
-  while (inFile) {
-    Uint64 sizeCompressed;
-    inFile.read(reinterpret_cast<char*>(&sizeCompressed), sizeof(sizeCompressed));
-    if (inFile.gcount() == 0) break;
-    Vector<char> inBuffer;
-    inBuffer.GrowToSize(sizeCompressed);
-    inFile.read(inBuffer.Data(), sizeCompressed);
-    Uint64 sizeDecompressed =
-        ZSTD_decompressDCtx(ctx, outBuffer.Data(), outBuffer.Allocated(), inBuffer.Data(), sizeCompressed);
-    String s(outBuffer.Data(), sizeDecompressed);
-    assetContent.PushBack(s);
+  while (in_file) {
+    Uint64 size_compressed;
+    in_file.read(reinterpret_cast<char*>(&size_compressed), sizeof(size_compressed));
+    if (in_file.gcount() == 0) break;
+    Vector<char> in_buffer;
+    in_buffer.resize(size_compressed);
+    in_file.read(in_buffer.data(), size_compressed);
+    Uint64 size_decompressed
+        = ZSTD_decompressDCtx(ctx, out_buffer.data(), out_buffer.capacity(), in_buffer.data(), size_compressed);
+    String s(out_buffer.data(), size_decompressed);
+    asset_content.push_back(s);
   }
 
-  inFile.close();
+  in_file.close();
   ZSTD_freeDCtx(ctx);
 }
 

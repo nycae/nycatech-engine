@@ -8,7 +8,6 @@
 #include <istream>
 
 #include "base.h"
-#include "vector.h"
 #include "zstd.h"
 
 namespace nycatech {
@@ -18,18 +17,18 @@ class Package {
   Package() = default;
   ~Package() = default;
 
-  void AddAsset(const String& file);
-  void Bundle(const String& file);
+  void add_asset(const String& file);
+  void bundle(const String& file);
 
-  void LoadFrom(const String& file);
+  void load_from(const String& file);
 
  public:
   Vector<String> assets;
-  Vector<String> assetContent;
+  Vector<String> asset_content;
 
  private:
-  static const Uint64 SizeBuffer = 1 << 24; // 16Mbytes
-  Uint64 SizeOfFiles();
+  static const Uint64 size_buffer = 1 << 24; // 16Mbytes
+  Uint64 size_of_files();
 };
 
 }  // namespace nycatech

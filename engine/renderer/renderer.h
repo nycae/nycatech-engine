@@ -20,16 +20,16 @@ class Color final : public Component {
 
 class Renderer {
  public:
-  static Renderer& Instance();
+  static Renderer& instance();
 
  private:
   Renderer();
   ~Renderer();
 
  public:
-  void DrawFrame();
-  void Render(const SmartPtr<Mesh>& mesh, const SmartPtr<Transform>& transform, const SmartPtr<Color> color);
-  void Buffer(const SmartPtr<Mesh>& mesh);
+  void draw_frame();
+  void render(const SmartPtr<Mesh>& mesh, const SmartPtr<Transform>& transform, const SmartPtr<Color>& color);
+  void buffer(const SmartPtr<Mesh>& mesh);
 
  public:
   SDL_Window* window;
@@ -39,11 +39,11 @@ class Renderer {
 
 class RenderSystem final : public System {
  public:
-  void Tick(World& world, Float32 timeDelta) override;
-  void Buffer(const SmartPtr<Mesh>& mesh);
+  void tick(World& world, Float32 time_delta) override;
+  void buffer(const SmartPtr<Mesh>& mesh);
 
  private:
-  Renderer& renderer = Renderer::Instance();
+  Renderer& renderer = Renderer::instance();
 };
 
 }  // namespace nycatech::render

@@ -29,7 +29,7 @@ Renderer::Renderer() {
   glewInit();
 }
 
-void Renderer::DrawFrame() {
+void Renderer::draw_frame() {
   SDL_GL_SwapWindow(window);
   glClear(GL_COLOR_BUFFER_BIT);
 }
@@ -39,25 +39,25 @@ Renderer::~Renderer() {
   SDL_Quit();
 }
 
-void Renderer::Render(const SmartPtr<Mesh>& mesh, const SmartPtr<Transform>& transform, const SmartPtr<Color> color) {
+void Renderer::render(const SmartPtr<Mesh>& mesh, const SmartPtr<Transform>& transform, const SmartPtr<Color>& color) {
   const auto sum = transform->rotation[0] + transform->rotation[1] + transform->rotation[2];
   glPushMatrix();
   glColor3f(color->color[0], color->color[1], color->color[2]);
   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
   glTranslatef(transform->position[0], transform->position[1], transform->position[2]);
   glRotatef(sum, transform->rotation[0] / sum, transform->rotation[1] / sum, transform->rotation[2] / sum);
-  glScalef(transform->scale[0], transform->scale[1], transform->scale[2]);
+  glScalef(transform->local_scale[0], transform->local_scale[1], transform->local_scale[2]);
   glBindVertexArray(mesh->vao);
-  glDrawArrays(GL_TRIANGLES, 0, mesh->vertices.Size());
+  glDrawArrays(GL_TRIANGLES, 0, mesh->vertices.size());
   glPopMatrix();
 }
 
-void Renderer::Buffer(const SmartPtr<Mesh>& mesh) {
+void Renderer::buffer(const SmartPtr<Mesh>& mesh) {
   glGenVertexArrays(1, &mesh->vao);
   glBindVertexArray(mesh->vao);
   glGenBuffers(1, &mesh->vbo);
   glBindBuffer(GL_ARRAY_BUFFER, mesh->vbo);
-  glBufferData(GL_ARRAY_BUFFER, mesh->vertices.Size() * sizeof(Vertex), mesh->vertices.Data(), GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, mesh->vertices.size() * sizeof(Vertex), mesh->vertices.data(), GL_STATIC_DRAW);
   glEnableVertexAttribArray(0);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, nullptr);
   glEnableVertexAttribArray(1);
@@ -66,19 +66,19 @@ void Renderer::Buffer(const SmartPtr<Mesh>& mesh) {
   glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void*)(sizeof(float) * 6));
 }
 
-Renderer& Renderer::Instance() {
+Renderer& Renderer::instance() {
   static Renderer renderer;
   return renderer;
 }
 
-void RenderSystem::Tick(World& world, Float32 timeDelta) {
-  for (auto entity : world.EntitiesWithComponent<Mesh, Transform, Color>()) {
-    auto [mesh, transform, color] = entity->Get<Mesh, Transform, Color>();
-    renderer.Render(mesh, transform, color);
+void RenderSystem::tick(World& world, Float32 time_delta) {
+  for (auto entity : world.entities_with<Mesh, Transform, Color>()) {
+    auto [mesh, transform, color] = entity->get<Mesh, Transform, Color>();
+    renderer.render(mesh, transform, color);
   }
-  renderer.DrawFrame();
+  renderer.draw_frame();
 }
 
-void RenderSystem::Buffer(const SmartPtr<Mesh>& mesh) { renderer.Buffer(mesh); }
+void RenderSystem::buffer(const SmartPtr<Mesh>& mesh) { renderer.buffer(mesh); }
 
 }  // namespace nycatech::render

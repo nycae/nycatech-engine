@@ -5,12 +5,15 @@
 #ifndef NYCA_TECH_BASE_H
 #define NYCA_TECH_BASE_H
 
+#include <array>
 #include <cstdint>
 #include <exception>
 #include <sstream>
 #include <string>
 #include <system_error>
 #include <typeindex>
+#include <unordered_map>
+#include <unordered_set>
 
 namespace nycatech {
 
@@ -39,14 +42,29 @@ using FileReader = std::ifstream;
 using Type = std::type_index;
 
 template <typename T, typename K>
-class Pair {
- public:
-  T first;
-  K second;
-};
+using Pair = std::pair<T, K>;
+
+template <typename T>
+using Vector = std::vector<T>;
+
+template <typename T>
+using Set = std::unordered_set<T>;
+
+template <typename K, typename V>
+using Map = std::unordered_map<K, V>;
 
 template <typename T>
 using SmartPtr = std::shared_ptr<T>;
+
+template <typename T, Uint64 size>
+using Array = std::array<T, size>;
+
+typedef Array<Float32, 3> Vec3;
+
+using std::make_shared;
+using std::make_tuple;
+using std::move;
+using std::make_pair;
 
 }  // namespace nycatech
 

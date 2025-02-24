@@ -5,7 +5,6 @@
 #ifndef NYCA_TECH_TRANSFORM_H
 #define NYCA_TECH_TRANSFORM_H
 
-#include "array.h"
 #include "base.h"
 #include "ecs.h"
 
@@ -13,23 +12,21 @@ namespace nycatech {
 
 class Transform : public Component {
  public:
-  Transform(Array<Float32, 3> position = {0.f, 0.f, 0.f},
-            Array<Float32, 3> rotation = {0.f, 0.f, 0.f},
-            Array<Float32, 3> scale = {1.f, 1.f, 1.f});
+  Transform(Vec3 position = {0.f, 0.f, 0.f}, Vec3 rotation = {0.f, 0.f, 0.f}, Vec3 scale = {1.f, 1.f, 1.f});
 
-  static SmartPtr<Transform> Make(Array<Float32, 3> position = {0.f, 0.f, 0.f},
-                                  Array<Float32, 3> rotation = {0.f, 0.f, 0.f},
-                                  Array<Float32, 3> scale = {1.f, 1.f, 1.f});
+  static SmartPtr<Transform> Make(Vec3 position = {0.f, 0.f, 0.f},
+                                  Vec3 rotation = {0.f, 0.f, 0.f},
+                                  Vec3 scale = {1.f, 1.f, 1.f});
 
  public:
-  void Translate(Array<float, 3> pos);
-  void Rotate(Array<float, 3> rot);
-  void Scale(Array<float, 3> scale);
+  void translate(Vec3 pos);
+  void rotate(Vec3 rot);
+  void scale(Vec3 scale);
 
  public:
-  Array<Float32, 3> position;
-  Array<Float32, 3> rotation;
-  Array<Float32, 3> scale;
+  Vec3 position;
+  Vec3 rotation;
+  Vec3 local_scale;
 };
 
 }  // namespace nycatech

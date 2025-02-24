@@ -6,7 +6,7 @@
 
 namespace nycatech::render {
 
-SmartPtr<Mesh> Mesh::FromFile(const char* path) {
+SmartPtr<Mesh> Mesh::from_file(const char* path) {
   tinyobj::attrib_t attrib;
   std::vector<tinyobj::shape_t> shapes;
   std::vector<tinyobj::material_t> materials;
@@ -19,16 +19,16 @@ SmartPtr<Mesh> Mesh::FromFile(const char* path) {
     return nullptr;
   }
 
-  return LoadData(attrib, shapes);
+  return load_data(attrib, shapes);
 }
 
-SmartPtr<Mesh> Mesh::FromString(const StringBuilder& stream) { return nullptr; }
+SmartPtr<Mesh> Mesh::from_string(const StringBuilder& stream) { return nullptr; }
 
-SmartPtr<Mesh> Mesh::LoadData(const tinyobj::attrib_t& attrib, const std::vector<tinyobj::shape_t>& shapes) {
+SmartPtr<Mesh> Mesh::load_data(const tinyobj::attrib_t& attrib, const std::vector<tinyobj::shape_t>& shapes) {
   auto mesh = std::make_shared<Mesh>();
   for (const auto& shape : shapes) {
     for (const auto& index : shape.mesh.indices) {
-      mesh->vertices.PushBack(Vertex{
+      mesh->vertices.push_back(Vertex{
           .position = {attrib.vertices[index.vertex_index * 3],
                        attrib.vertices[index.vertex_index * 3 + 1],
                        attrib.vertices[index.vertex_index * 3 + 2]},

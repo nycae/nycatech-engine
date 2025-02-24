@@ -7,16 +7,15 @@
 namespace nycatech {
 
 Entity& World::CreateEntity() {
-  Entity newEntity;
-  entities.PushBack(std::move(newEntity));
-  return entities[entities.Size() - 1];
+  Entity entity;
+  entities.push_back(std::move(entity));
+  return entities.back();
 }
 
-void World::Tick(Float32 timeDelta) {
+void World::tick(Float32 time_delta) {
   for (auto& system : systems) {
-    system->Tick(Self, timeDelta);
+    system->tick(Self, time_delta);
   }
 }
-
 
 }  // namespace nycatech

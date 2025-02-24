@@ -7,10 +7,8 @@
 
 #include "library/ecs.h"
 #include "library/package.h"
-#include "library/vector.h"
 #include "renderer/mesh.h"
 #include "renderer/renderer.h"
-#include "library/hash_map.h"
 
 namespace nycatech {
 
@@ -19,7 +17,7 @@ class Application {
   Application();
   ~Application();
 
-  void Run();
+  void run();
 
  private:
   World world;

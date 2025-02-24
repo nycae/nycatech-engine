@@ -8,9 +8,6 @@
 #include <unordered_map>
 
 #include "base.h"
-#include "hash_map.h"
-#include "hash_set.h"
-#include "vector.h"
 
 namespace nycatech {
 
@@ -23,47 +20,51 @@ class System;
 
 class Entity {
  public:
+  Entity() = default;
+  Entity(Entity&&) = default;
+
+ public:
   template <typename T>
-  void AddComponent(const SmartPtr<T>& component) {
+  void add_component(const SmartPtr<T>& component) {
     components.insert({typeid(T), component});
   }
 
   template <typename T>
-  void RemoveComponents() {
+  void remove_component() {
     components.erase(typeid(T));
   }
 
   template <typename T>
-  bool HasComponents() {
+  bool has_components() {
     return components.contains(typeid(T));
   }
 
   template <typename T, typename T1, typename... T2>
-  bool HasComponents() {
-    return components.contains(typeid(T)) && HasComponents<T1, T2...>();
+  bool has_components() {
+    return components.contains(typeid(T)) && has_components<T1, T2...>();
   }
 
   template <typename... Ts>
-  auto Get() {
-    return std::make_tuple(static_pointer_cast<Ts>(components.at(typeid(Ts)))...);
+  auto get() {
+    return make_tuple(static_pointer_cast<Ts>(components.at(typeid(Ts)))...);
   }
 
  private:
-  std::unordered_map<Type, SmartPtr<Component>> components;
+  Map<Type, SmartPtr<Component>> components;
 };
 
 class World {
  public:
   Entity& CreateEntity();
-  void Tick(Float32 timeDelta);
+  void tick(Float32 time_delta);
 
  public:
   template <typename H, typename... T>
-  Vector<Entity*> EntitiesWithComponent() {
+  Vector<Entity*> entities_with() {
     Vector<Entity*> result;
     for (auto& entity : entities) {
-      if (!entity.HasComponents<H, T...>()) continue;
-      result.PushBack(&entity);
+      if (!entity.has_components<H, T...>()) continue;
+      result.push_back(&entity);
     }
     return result;
   };
@@ -80,7 +81,7 @@ class Component {
 
 class System {
  public:
-  virtual void Tick(World& world, Float32 timeDelta) = 0;
+  virtual void tick(World& world, Float32 time_delta) = 0;
 };
 
 }  // namespace nycatech

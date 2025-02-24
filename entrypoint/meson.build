@@ -1,1 +1,2 @@
 subdir('client')
+subdir('test')

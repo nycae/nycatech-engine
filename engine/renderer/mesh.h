@@ -8,7 +8,6 @@
 #include <array>
 
 #include "library/transform.h"
-#include "library/vector.h"
 #include "tiny_obj_loader.h"
 
 namespace nycatech::render {
@@ -21,8 +20,8 @@ struct Vertex {
 
 class Mesh : public Component {
  public:
-  static SmartPtr<Mesh> FromFile(const char* path);
-  static SmartPtr<Mesh> FromString(const StringBuilder& stream);
+  static SmartPtr<Mesh> from_file(const char* path);
+  static SmartPtr<Mesh> from_string(const StringBuilder& stream);
 
  public:
   Vector<Vertex> vertices;
@@ -30,7 +29,7 @@ class Mesh : public Component {
   Uint32 vbo;
 
  private:
-  static SmartPtr<Mesh> LoadData(const tinyobj::attrib_t& attrib, const std::vector<tinyobj::shape_t>& shapes);
+  static SmartPtr<Mesh> load_data(const tinyobj::attrib_t& attrib, const std::vector<tinyobj::shape_t>& shapes);
 
  public:
   Mesh() = default;

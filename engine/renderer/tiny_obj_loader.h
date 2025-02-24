@@ -100,7 +100,7 @@ Copyright (c) 2012-Present, Syoyo Fujita and many contributors.
   //                                         gain_value = contrast
   //  -o u [v [w]]                           # Origin offset             (default
   //  0 0 0)
-  //  -s u [v [w]]                           # Scale                     (default
+  //  -s u [v [w]]                           # scale                     (default
   //  1 1 1)
   //  -t u [v [w]]                           # Turbulence                (default
   //  0 0 0)
