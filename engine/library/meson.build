@@ -10,6 +10,7 @@ nycatech_lib = static_library(
     'ecs.cc',
     'scene.cc',
     'mesh.cc',
+    'tiny_obj_loader.cc',
     generated_files],
   install : true,
   dependencies : [zstd_lib, flatbuffers_lib])

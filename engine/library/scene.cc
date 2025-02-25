@@ -4,7 +4,8 @@
 
 #include "scene.h"
 
-#include "flatbuffers/flatbuffers.h"
+#include <flatbuffers/flatbuffers.h>
+
 #include "mesh.h"
 #include "scene_generated.h"
 #include "transform.h"
@@ -36,24 +37,28 @@ SceneManager& SceneManager::instance() {
   return instance;
 }
 
-void SceneManager::add_scene(const String& scene_name, const SmartPtr<Scene>& scene) {
-  scenes.insert(make_pair(scene_name, scene));
-}
+void SceneManager::add_scene(const String& scene_name, const SmartPtr<Scene>& scene) { scenes.insert(make_pair(scene_name, scene)); }
 
 bool SceneFactory::serialize_scene(const SmartPtr<Scene>& scene, const String& file_path) {
   flatbuffers::FlatBufferBuilder builder(1 << 20);  // 1mb
   auto offset_scene_name = builder.CreateString(scene->name);
-
   Vector<flatbuffers::Offset<schemas::Entity>> offset_entities;
   for (const auto& entity : scene->world.entities) {
     Vector<flatbuffers::Offset<schemas::Component>> offset_components;
     for (const auto& [_, component] : entity.components) {
       if (auto transform = dynamic_cast<Transform*>(component.get())) {
-      } else if (auto mesh = dynamic_cast<Mesh*>(component.get())) {
+        auto position = schemas::CreateVector3(builder, transform->position[0], transform->position[1], transform->position[2]);
+        auto rotation = schemas::CreateVector3(builder, transform->rotation[0], transform->rotation[1], transform->rotation[2]);
+        auto scale = schemas::CreateVector3(builder, transform->local_scale[0], transform->local_scale[1], transform->local_scale[2]);
+        auto offset_transform = schemas::CreateTransform(builder, position, rotation, scale);
+        offset_components.push_back(offset_transform);
       }
+
+//      else if (auto mesh = dynamic_cast<Mesh*>(component.get())) {
+//      }
     }
     auto serialized_components = builder.CreateVector(offset_components);
-    auto entity_offset = schemas::CreateEntity(builder, serialized_components);
+    auto entity_offset = schemas::CreateEntity(builder, {schemas::Component_Transform}, serialized_components);
     offset_entities.push_back(entity_offset);
   }
 

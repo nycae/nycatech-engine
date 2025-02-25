@@ -7,7 +7,7 @@
 
 #include <array>
 
-#include "library/transform.h"
+#include "transform.h"
 #include "tiny_obj_loader.h"
 
 namespace nycatech::render {

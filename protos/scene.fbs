@@ -35,3 +35,25 @@ table Scene {
   entities: [Entity];
   systems: [System];
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+table Dog {
+    name: string;
+    age: int;
+}
+
+table Cat {
+    name: string;
+    color: string;
+}
+
+union Animal {
+    Dog,
+    Cat
+}
+
+table Zoo {
+    animals: [Animal];
+}
+
+root_type Zoo;

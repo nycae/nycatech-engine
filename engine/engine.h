@@ -5,8 +5,8 @@
 #ifndef NYCA_TECH_ENGINE_H
 #define NYCA_TECH_ENGINE_H
 
-#include "engine/library/mesh.h"
 #include "library/ecs.h"
+#include "library/mesh.h"
 #include "library/package.h"
 #include "renderer/renderer.h"
 
