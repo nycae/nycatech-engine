@@ -49,7 +49,7 @@ class Entity {
     return make_tuple(static_pointer_cast<Ts>(components.at(typeid(Ts)))...);
   }
 
- private:
+ public:
   Map<Type, SmartPtr<Component>> components;
 };
 

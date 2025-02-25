@@ -5,9 +5,9 @@
 #ifndef NYCA_TECH_ENGINE_H
 #define NYCA_TECH_ENGINE_H
 
+#include "engine/library/mesh.h"
 #include "library/ecs.h"
 #include "library/package.h"
-#include "renderer/mesh.h"
 #include "renderer/renderer.h"
 
 namespace nycatech {

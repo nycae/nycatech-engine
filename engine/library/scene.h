@@ -11,6 +11,8 @@ namespace nycatech {
 
 class Scene {
  public:
+  friend class SceneFactory;
+
   Scene() = default;
   ~Scene() = default;
 
@@ -23,6 +25,7 @@ class Scene {
 
  private:
   World world;
+  String name;
 };
 
 class SceneManager {
@@ -41,6 +44,12 @@ class SceneManager {
  private:
   Map<String, SmartPtr<Scene>> scenes;
   SmartPtr<Scene> current_scene;
+};
+
+class SceneFactory {
+ public:
+  static SmartPtr<Scene> create_scene(const String& name) { return make_shared<Scene>(); }
+  static bool serialize_scene(const SmartPtr<Scene>& scene, const String& file_path);
 };
 
 }  // namespace nycatech

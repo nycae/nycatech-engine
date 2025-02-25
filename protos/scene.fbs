@@ -1,0 +1,37 @@
+namespace nycatech.schemas;
+
+table Vector3 {
+  x: float;
+  y: float;
+  z: float;
+}
+
+table Transform {
+  position: Vector3;
+  rotation: Vector3;
+  scale: Vector3;
+}
+
+table Mesh {
+  name: string;
+}
+
+union Component {
+  Transform,
+  Mesh
+}
+
+table Entity {
+  components: [Component];
+}
+
+enum System : uint64 {
+  Transform = 1,
+  Mesh = 2
+}
+
+table Scene {
+  name: string;
+  entities: [Entity];
+  systems: [System];
+}

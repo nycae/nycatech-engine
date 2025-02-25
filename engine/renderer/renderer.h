@@ -8,7 +8,7 @@
 #include <array>
 
 #include "SDL.h"
-#include "mesh.h"
+#include "engine/library/mesh.h"
 
 namespace nycatech::render {
 
