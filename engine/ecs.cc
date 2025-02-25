@@ -6,7 +6,7 @@
 
 namespace nycatech {
 
-Entity& World::CreateEntity() {
+Entity& World::create_entity() {
   Entity entity;
   entities.push_back(std::move(entity));
   return entities.back();

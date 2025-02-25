@@ -8,6 +8,7 @@
 #include <array>
 #include <cstdint>
 #include <exception>
+#include <fstream>
 #include <sstream>
 #include <string>
 #include <system_error>

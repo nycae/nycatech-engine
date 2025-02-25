@@ -16,8 +16,6 @@ class Entity;
 class World;
 class System;
 
-// typedef std::function<void(World& world, float timeDelta)> System;
-
 class Entity {
  public:
   Entity() = default;
@@ -55,7 +53,7 @@ class Entity {
 
 class World {
  public:
-  Entity& CreateEntity();
+  Entity& create_entity();
   void tick(Float32 time_delta);
 
  public:
@@ -74,8 +72,7 @@ class World {
   Vector<SmartPtr<System>> systems;
 };
 
-class Component {
- public:
+struct Component {
   virtual ~Component() = default;
 };
 

@@ -8,8 +8,8 @@
 #include <array>
 
 #include "SDL.h"
-#include "library/base.h"
-#include "library/mesh.h"
+#include "base.h"
+#include "mesh.h"
 
 namespace nycatech::render {
 
@@ -29,7 +29,7 @@ class Renderer {
 
  public:
   void draw_frame();
-  void render(const SmartPtr<Mesh>& mesh, const SmartPtr<Transform>& transform, const SmartPtr<Color>& color);
+  void render(const String& mesh_name, const SmartPtr<Transform>& transform);
   void buffer(const SmartPtr<Mesh>& mesh);
 
  public:

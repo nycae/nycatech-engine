@@ -5,10 +5,11 @@
 #ifndef NYCA_TECH_ENGINE_H
 #define NYCA_TECH_ENGINE_H
 
-#include "library/ecs.h"
-#include "library/mesh.h"
-#include "library/package.h"
-#include "renderer/renderer.h"
+#include "ecs.h"
+#include "scene.h"
+#include "mesh.h"
+#include "package.h"
+#include "renderer.h"
 
 namespace nycatech {
 
@@ -20,7 +21,7 @@ class Application {
   void run();
 
  private:
-  World world;
+  SmartPtr<Scene> scene;
   SDL_Event event;
 };
 
