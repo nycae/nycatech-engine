@@ -15,8 +15,7 @@ using namespace render;
 class RotatingSystem final : public System {
  public:
   void tick(World& world, Float32 time_delta) override {
-    for (auto entity : world.entities_with<Transform>()) {
-      auto [transform] = entity->get<Transform>();
+    for (auto transform : world.components_of_type<Transform>()) {
       transform->rotate({0.f, 1.f, 0.f});
     }
   };
@@ -29,8 +28,7 @@ class ChangeColorSystem final : public System {
   void tick(World& world, Float32 time_delta) override {
     red_amount += 1;
     if (red_amount >= 256) red_amount = 0;
-    for (auto entity : world.entities_with<Color>()) {
-      auto [color] = entity->get<Color>();
+    for (auto color : world.components_of_type<Color>()) {
       Float32 newColor = red_amount / 256.f;
       color->color[1] = newColor;
     }
@@ -53,14 +51,27 @@ void Application::run() {
 }
 
 Application::Application()
-    : scene(SceneFactory::deserialize_scene("main", "../../../assets/scene.fb")) {
-//    : scene(SceneFactory::create_scene("main")) {
-  auto ogre = MeshFactory::intance().from_file("robot", "../../../assets/robot.obj");
+//    : scene(SceneFactory::deserialize_scene("main", "../../../assets/scene.fb")) {
+    : scene(SceneFactory::create_scene("main")) {
+  auto robot = MeshFactory::intance().from_file("robot", "../../../assets/robot.obj");
+  if (!robot) {
+    fprintf(stderr, "unable to load model");
+  }
+
+  auto ogre = MeshFactory::intance().from_file("ogre", "../../../assets/ogre.obj");
   if (!ogre) {
     fprintf(stderr, "unable to load model");
   }
-  auto render_system = dynamic_cast<RenderSystem*>(scene->world.systems[0].get());
+
+
+  auto render_system = make_shared<RenderSystem>();
   render_system->buffer(ogre);
+  render_system->buffer(robot);
+
+  auto& entity_ogre = scene->world.create_entity();
+  entity_ogre.add_component(make_shared<MeshComponent>("ogre"));
+  entity_ogre.add_component(make_shared<Transform>(Vec3{-0.f, -0.6f, 0.f}, Vec3{0.f, 0.f, 0.f}, Vec3{0.05f, 0.05f, 0.05f}));
+
 //  auto& ogre_blue = scene->create_entity();
 //  ogre_blue.add_component(make_shared<MeshComponent>("robot"));
 //  ogre_blue.add_component(make_shared<Transform>(Vec3{-0.f, -0.6f, 0.f}, Vec3{0.f, 0.f, 0.f}, Vec3{0.05f, 0.05f, 0.05f}));
@@ -72,6 +83,7 @@ Application::Application()
 //  render_system->buffer(ogre);
 //
 //  scene->add_system(render_system);
+  scene->add_system(render_system);
   scene->add_system(make_shared<RotatingSystem>());
   scene->add_system(make_shared<ChangeColorSystem>());
 }

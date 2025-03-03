@@ -5,8 +5,6 @@
 #ifndef NYCA_TECH_ECS_H
 #define NYCA_TECH_ECS_H
 
-#include <unordered_map>
-
 #include "base.h"
 
 namespace nycatech {
@@ -57,15 +55,27 @@ class World {
   void tick(Float32 time_delta);
 
  public:
-  template <typename H, typename... T>
-  Vector<Entity*> entities_with() {
-    Vector<Entity*> result;
+  template <typename T>
+  auto components_of_type() {
+    Vector<SmartPtr<T>> result;
     for (auto& entity : entities) {
-      if (!entity.has_components<H, T...>()) continue;
-      result.push_back(&entity);
+      for (auto& [type, component] : entity.components) {
+        if (typeid(T) != type) continue;
+        result.push_back(dynamic_pointer_cast<T>(component));
+      }
     }
     return result;
   };
+
+  template <typename T, typename... M>
+  auto entities_with() {
+    Vector<Tuple<SmartPtr<T>, SmartPtr<M>...>> result;
+    for (auto& entity : entities) {
+      if (!entity.has_components<T, M...>()) continue;
+      result.push_back(entity.get<T, M...>());
+    }
+    return result;
+  }
 
  public:
   Vector<Entity> entities;

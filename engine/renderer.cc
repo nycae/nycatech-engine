@@ -43,7 +43,7 @@ void Renderer::render(const String& mesh_name, const SmartPtr<Transform>& transf
   const auto sum = transform->rotation[0] + transform->rotation[1] + transform->rotation[2];
   const auto mesh = MeshFactory::intance().get(mesh_name);
   glPushMatrix();
-//  glColor3f(color->color[0], color->color[1], color->color[2]);
+  //  glColor3f(color->color[0], color->color[1], color->color[2]);
   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
   glTranslatef(transform->position[0], transform->position[1], transform->position[2]);
   glRotatef(sum, transform->rotation[0] / sum, transform->rotation[1] / sum, transform->rotation[2] / sum);
@@ -73,8 +73,7 @@ Renderer& Renderer::instance() {
 }
 
 void RenderSystem::tick(World& world, Float32 time_delta) {
-  for (auto entity : world.entities_with<MeshComponent, Transform>()) {
-    auto [mesh, transform] = entity->get<MeshComponent, Transform>();
+  for (const auto& [mesh, transform] : world.entities_with<MeshComponent, Transform>()) {
     renderer.render(mesh->name, transform);
   }
   renderer.draw_frame();

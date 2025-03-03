@@ -60,12 +60,54 @@ using SmartPtr = std::shared_ptr<T>;
 template <typename T, Uint64 size>
 using Array = std::array<T, size>;
 
+template <typename T, typename ...M>
+using Tuple = std::tuple<T, M...>;
+
 typedef Array<Float32, 3> Vec3;
 
+template <Uint64 H, Uint64 W>
+class Matrix {
+ public:
+  Matrix(const Array<Float32, H * W>& init = {}) : inner(init) {};
+  Float32& at(Uint64 i, Uint64 j) { return inner.at(i * W + j); };
+  const Float32& at(Uint64 i, Uint64 j) const { return inner.at(i * W + j); };
+
+  Matrix& operator=(const Matrix& other) = default;
+
+  Matrix operator+(const Matrix& other) {
+    Matrix m;
+    for (auto i = 0ul; i < W; i++) {
+      for (auto j = 0ul; j < H; j++) {
+        m.at(i, j) = Self.at(i, j) + other.at(i, j);
+      }
+    }
+    return m;
+  };
+
+  template <Uint64 I, Uint64 J>
+  Matrix<H, J> operator*(const Matrix<I, J>& other) {
+    static_assert(W == I);
+    Matrix<H, J> m;
+    for (auto i = 0ul; i < H; i++) {
+      for (auto j = 0ul; j < J; j++) {
+        for (auto k = 0ul; k < I; k++) {
+          m.at(i, j) += Self.at(i, k) * other.at(k, j);
+        }
+      }
+    }
+    return m;
+  }
+
+ private:
+  Array<Float32, H * W> inner;
+};
+
+using std::make_pair;
 using std::make_shared;
 using std::make_tuple;
 using std::move;
-using std::make_pair;
+using std::static_pointer_cast;
+using std::dynamic_pointer_cast;
 
 }  // namespace nycatech
 

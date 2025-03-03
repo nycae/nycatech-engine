@@ -13,10 +13,18 @@
 
 namespace nycatech::render {
 
-class Color final : public Component {
- public:
+struct Color final : public Component {
   Color(Array<Float32, 3> color) : color(color) {};
   Array<Float32, 3> color;
+};
+
+struct Camera final : public Component {
+  Array<Float32, 4> view_matrix;
+  Array<Float32, 4> projection_matrix;
+  float fov = 90.0f;
+  float near_plane = 0.1f;
+  float far_plane = 1000.0f;
+  bool isMainCamera = false;
 };
 
 class Renderer {

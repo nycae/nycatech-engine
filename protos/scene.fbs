@@ -6,6 +6,17 @@ table Vector3 {
   z: float;
 }
 
+table Vector4 {
+  x: float;
+  y: float;
+  z: float;
+  w: float;
+}
+
+table Camera {
+  view_matrix: Vector4;
+}
+
 table Transform {
   position: Vector3;
   rotation: Vector3;
