@@ -1,0 +1,55 @@
+syntax = 'proto3';
+
+package nycatech.protos.v1;
+
+message Vector3 {
+  float x = 1;
+  float y = 2;
+  float z = 3;
+}
+
+message Vector4 {
+  float x = 1;
+  float y = 2;
+  float z = 3;
+  float w = 4;
+}
+
+message Camera {
+  Vector4 view_matrix = 4;
+}
+
+message Transform {
+  Vector3 position = 1;
+  Vector3 rotation = 2;
+  Vector3 scale = 3;
+}
+
+message Mesh {
+  string name = 1;
+}
+
+message Component {
+  oneof component {
+    Transform transform = 1;
+    Mesh mesh = 2;
+  }
+}
+
+message Entity {
+  repeated Component components = 1;
+}
+
+message System {
+  enum Type {
+    Renderer = 0;
+  }
+
+  Type type = 1;
+}
+
+message Scene {
+  string name = 1;
+  repeated Entity entities = 2;
+  repeated System systems = 3;
+}

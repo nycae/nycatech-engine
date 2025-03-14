@@ -1,0 +1,297 @@
+{
+	"artifacts" : 
+	[
+		{
+			"path" : "entrypoint/test/test.exe"
+		},
+		{
+			"path" : "entrypoint/test/test.pdb"
+		}
+	],
+	"backtrace" : 2,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"_add_executable",
+			"add_executable",
+			"target_link_libraries",
+			"set_target_properties",
+			"include",
+			"_find_package",
+			"find_package"
+		],
+		"files" : 
+		[
+			"C:/Users/rplaz/.vcpkg-clion/1)/scripts/buildsystems/vcpkg.cmake",
+			"entrypoint/test/CMakeLists.txt",
+			"engine/CMakeLists.txt",
+			"protos/CMakeLists.txt",
+			"C:/Users/rplaz/.vcpkg-clion/1)/installed/x64-windows/share/protobuf/protobuf-targets.cmake",
+			"C:/Users/rplaz/.vcpkg-clion/1)/installed/x64-windows/share/protobuf/protobuf-config.cmake",
+			"C:/Users/rplaz/.vcpkg-clion/1)/installed/x64-windows/share/protobuf/vcpkg-cmake-wrapper.cmake",
+			"C:/Users/rplaz/.vcpkg-clion/1)/installed/x64-windows/share/zstd/zstdTargets.cmake",
+			"C:/Users/rplaz/.vcpkg-clion/1)/installed/x64-windows/share/zstd/zstdConfig.cmake"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 1
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 1,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 598,
+				"parent" : 1
+			},
+			{
+				"command" : 2,
+				"file" : 1,
+				"line" : 2,
+				"parent" : 0
+			},
+			{
+				"file" : 2
+			},
+			{
+				"command" : 2,
+				"file" : 2,
+				"line" : 25,
+				"parent" : 4
+			},
+			{
+				"file" : 3
+			},
+			{
+				"command" : 2,
+				"file" : 3,
+				"line" : 9,
+				"parent" : 6
+			},
+			{
+				"command" : 6,
+				"file" : 3,
+				"line" : 1,
+				"parent" : 6
+			},
+			{
+				"command" : 4,
+				"file" : 0,
+				"line" : 847,
+				"parent" : 8
+			},
+			{
+				"file" : 6,
+				"parent" : 9
+			},
+			{
+				"command" : 5,
+				"file" : 6,
+				"line" : 3,
+				"parent" : 10
+			},
+			{
+				"file" : 5,
+				"parent" : 11
+			},
+			{
+				"command" : 4,
+				"file" : 5,
+				"line" : 14,
+				"parent" : 12
+			},
+			{
+				"file" : 4,
+				"parent" : 13
+			},
+			{
+				"command" : 3,
+				"file" : 4,
+				"line" : 70,
+				"parent" : 14
+			},
+			{
+				"command" : 6,
+				"file" : 2,
+				"line" : 3,
+				"parent" : 4
+			},
+			{
+				"command" : 5,
+				"file" : 0,
+				"line" : 893,
+				"parent" : 16
+			},
+			{
+				"file" : 8,
+				"parent" : 17
+			},
+			{
+				"command" : 4,
+				"file" : 8,
+				"line" : 32,
+				"parent" : 18
+			},
+			{
+				"file" : 7,
+				"parent" : 19
+			},
+			{
+				"command" : 3,
+				"file" : 7,
+				"line" : 67,
+				"parent" : 20
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "/DWIN32 /D_WINDOWS /EHsc /Ob0 /Od /RTC1 -std:c++latest -MDd -Zi"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"backtrace" : 3,
+					"define" : "ABSL_CONSUME_DLL"
+				},
+				{
+					"backtrace" : 3,
+					"define" : "PROTOBUF_USE_DLLS"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 3,
+					"path" : "C:/Users/rplaz/Desktop/nycatech-engine/engine/.."
+				},
+				{
+					"backtrace" : 3,
+					"path" : "C:/Users/rplaz/Desktop/nycatech-engine/cmake-build-debug/protos"
+				},
+				{
+					"backtrace" : 3,
+					"isSystem" : true,
+					"path" : "C:/Users/rplaz/.vcpkg-clion/1)/installed/x64-windows/include"
+				}
+			],
+			"language" : "CXX",
+			"languageStandard" : 
+			{
+				"backtraces" : 
+				[
+					3
+				],
+				"standard" : "23"
+			},
+			"sourceIndexes" : 
+			[
+				0
+			]
+		}
+	],
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 3,
+			"id" : "protos::@71dc2f9b8b8d766214d4"
+		},
+		{
+			"backtrace" : 3,
+			"id" : "nycatech::@4088515cb4035b412499"
+		}
+	],
+	"id" : "test::@d9bfd647436d0ef2073c",
+	"link" : 
+	{
+		"commandFragments" : 
+		[
+			{
+				"fragment" : "/DWIN32 /D_WINDOWS /EHsc /Ob0 /Od /RTC1 -MDd -Zi",
+				"role" : "flags"
+			},
+			{
+				"fragment" : "/machine:x64 /debug /INCREMENTAL /subsystem:console",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "engine\\nycatech.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "protos\\protos.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 7,
+				"fragment" : "C:\\Users\\rplaz\\.vcpkg-clion\\1)\\installed\\x64-windows\\debug\\lib\\libprotobufd.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 15,
+				"fragment" : "C:\\Users\\rplaz\\.vcpkg-clion\\1)\\installed\\x64-windows\\debug\\lib\\abseil_dll.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "C:\\Users\\rplaz\\.vcpkg-clion\\1)\\installed\\x64-windows\\debug\\lib\\SDL3.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "C:\\Users\\rplaz\\.vcpkg-clion\\1)\\installed\\x64-windows\\debug\\lib\\glad.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 21,
+				"fragment" : "C:\\Users\\rplaz\\.vcpkg-clion\\1)\\installed\\x64-windows\\debug\\lib\\zstd.lib",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib",
+				"role" : "libraries"
+			}
+		],
+		"language" : "CXX"
+	},
+	"name" : "test",
+	"nameOnDisk" : "test.exe",
+	"paths" : 
+	{
+		"build" : "entrypoint/test",
+		"source" : "entrypoint/test"
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
+				0
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 2,
+			"compileGroupIndex" : 0,
+			"path" : "entrypoint/test/main.cc",
+			"sourceGroupIndex" : 0
+		}
+	],
+	"type" : "EXECUTABLE"
+}

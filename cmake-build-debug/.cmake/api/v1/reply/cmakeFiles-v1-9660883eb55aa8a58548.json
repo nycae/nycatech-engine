@@ -1,0 +1,385 @@
+{
+	"inputs" : 
+	[
+		{
+			"path" : "CMakeLists.txt"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/CMakeFiles/3.30.5/CMakeSystem.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/.vcpkg-clion/1)/scripts/buildsystems/vcpkg.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/AppData/Local/Programs/CLion/bin/cmake/win/x64/share/cmake-3.30/Modules/CMakeDependentOption.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/AppData/Local/Programs/CLion/bin/cmake/win/x64/share/cmake-3.30/Modules/CMakeSystemSpecificInitialize.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/AppData/Local/Programs/CLion/bin/cmake/win/x64/share/cmake-3.30/Modules/Platform/Windows-Initialize.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/CMakeFiles/3.30.5/CMakeCCompiler.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/CMakeFiles/3.30.5/CMakeCXXCompiler.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/AppData/Local/Programs/CLion/bin/cmake/win/x64/share/cmake-3.30/Modules/CMakeSystemSpecificInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/AppData/Local/Programs/CLion/bin/cmake/win/x64/share/cmake-3.30/Modules/CMakeGenericSystem.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/AppData/Local/Programs/CLion/bin/cmake/win/x64/share/cmake-3.30/Modules/CMakeInitializeConfigs.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/AppData/Local/Programs/CLion/bin/cmake/win/x64/share/cmake-3.30/Modules/Platform/Windows.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/AppData/Local/Programs/CLion/bin/cmake/win/x64/share/cmake-3.30/Modules/Platform/WindowsPaths.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/AppData/Local/Programs/CLion/bin/cmake/win/x64/share/cmake-3.30/Modules/CMakeCInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/AppData/Local/Programs/CLion/bin/cmake/win/x64/share/cmake-3.30/Modules/CMakeLanguageInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/AppData/Local/Programs/CLion/bin/cmake/win/x64/share/cmake-3.30/Modules/Compiler/MSVC-C.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/AppData/Local/Programs/CLion/bin/cmake/win/x64/share/cmake-3.30/Modules/Compiler/MSVC.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/AppData/Local/Programs/CLion/bin/cmake/win/x64/share/cmake-3.30/Modules/Compiler/CMakeCommonCompilerMacros.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/AppData/Local/Programs/CLion/bin/cmake/win/x64/share/cmake-3.30/Modules/Platform/Windows-MSVC-C.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/AppData/Local/Programs/CLion/bin/cmake/win/x64/share/cmake-3.30/Modules/Platform/Windows-MSVC.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/CMakeFiles/3.30.5/CMakeRCCompiler.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/AppData/Local/Programs/CLion/bin/cmake/win/x64/share/cmake-3.30/Modules/CMakeRCInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/AppData/Local/Programs/CLion/bin/cmake/win/x64/share/cmake-3.30/Modules/CMakeCommonLanguageInclude.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/AppData/Local/Programs/CLion/bin/cmake/win/x64/share/cmake-3.30/Modules/CMakeCXXInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/AppData/Local/Programs/CLion/bin/cmake/win/x64/share/cmake-3.30/Modules/CMakeLanguageInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/AppData/Local/Programs/CLion/bin/cmake/win/x64/share/cmake-3.30/Modules/Compiler/MSVC-CXX.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/AppData/Local/Programs/CLion/bin/cmake/win/x64/share/cmake-3.30/Modules/Compiler/MSVC.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/AppData/Local/Programs/CLion/bin/cmake/win/x64/share/cmake-3.30/Modules/Compiler/CMakeCommonCompilerMacros.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/AppData/Local/Programs/CLion/bin/cmake/win/x64/share/cmake-3.30/Modules/Platform/Windows-MSVC-CXX.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/AppData/Local/Programs/CLion/bin/cmake/win/x64/share/cmake-3.30/Modules/Platform/Windows-MSVC.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/AppData/Local/Programs/CLion/bin/cmake/win/x64/share/cmake-3.30/Modules/CMakeCommonLanguageInclude.cmake"
+		},
+		{
+			"path" : "protos/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/.vcpkg-clion/1)/installed/x64-windows/share/protobuf/vcpkg-cmake-wrapper.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/.vcpkg-clion/1)/installed/x64-windows/share/protobuf/protobuf-config-version.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/.vcpkg-clion/1)/installed/x64-windows/share/protobuf/protobuf-config.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/.vcpkg-clion/1)/installed/x64-windows/share/protobuf/protobuf-options.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/.vcpkg-clion/1)/installed/x64-windows/share/absl/abslConfigVersion.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/.vcpkg-clion/1)/installed/x64-windows/share/absl/abslConfig.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/AppData/Local/Programs/CLion/bin/cmake/win/x64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/AppData/Local/Programs/CLion/bin/cmake/win/x64/share/cmake-3.30/Modules/FindThreads.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/AppData/Local/Programs/CLion/bin/cmake/win/x64/share/cmake-3.30/Modules/CheckLibraryExists.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/AppData/Local/Programs/CLion/bin/cmake/win/x64/share/cmake-3.30/Modules/CheckIncludeFile.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/AppData/Local/Programs/CLion/bin/cmake/win/x64/share/cmake-3.30/Modules/CheckCSourceCompiles.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/AppData/Local/Programs/CLion/bin/cmake/win/x64/share/cmake-3.30/Modules/Internal/CheckSourceCompiles.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/AppData/Local/Programs/CLion/bin/cmake/win/x64/share/cmake-3.30/Modules/FindPackageHandleStandardArgs.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/AppData/Local/Programs/CLion/bin/cmake/win/x64/share/cmake-3.30/Modules/FindPackageMessage.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/.vcpkg-clion/1)/installed/x64-windows/share/absl/abslTargets.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/.vcpkg-clion/1)/installed/x64-windows/share/absl/abslTargets-debug.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/.vcpkg-clion/1)/installed/x64-windows/share/absl/abslTargets-release.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/.vcpkg-clion/1)/installed/x64-windows/share/utf8_range/utf8_range-config.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/.vcpkg-clion/1)/installed/x64-windows/share/utf8_range/utf8_range-targets.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/.vcpkg-clion/1)/installed/x64-windows/share/utf8_range/utf8_range-targets-debug.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/.vcpkg-clion/1)/installed/x64-windows/share/utf8_range/utf8_range-targets-release.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/.vcpkg-clion/1)/installed/x64-windows/share/protobuf/protobuf-targets.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/.vcpkg-clion/1)/installed/x64-windows/share/protobuf/protobuf-targets-debug.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/.vcpkg-clion/1)/installed/x64-windows/share/protobuf/protobuf-targets-release.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/.vcpkg-clion/1)/installed/x64-windows/share/protobuf/protobuf-generate.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/.vcpkg-clion/1)/installed/x64-windows/share/protobuf/protobuf-module.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/AppData/Local/Programs/CLion/bin/cmake/win/x64/share/cmake-3.30/Modules/SelectLibraryConfigurations.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/AppData/Local/Programs/CLion/bin/cmake/win/x64/share/cmake-3.30/Modules/FindPackageHandleStandardArgs.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/AppData/Local/Programs/CLion/bin/cmake/win/x64/share/cmake-3.30/Modules/FindPackageMessage.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/AppData/Local/Programs/CLion/bin/cmake/win/x64/share/cmake-3.30/Modules/CMakeParseArguments.cmake"
+		},
+		{
+			"path" : "engine/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/.vcpkg-clion/1)/installed/x64-windows/share/sdl3/SDL3ConfigVersion.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/.vcpkg-clion/1)/installed/x64-windows/share/sdl3/SDL3Config.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/AppData/Local/Programs/CLion/bin/cmake/win/x64/share/cmake-3.30/Modules/FeatureSummary.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/.vcpkg-clion/1)/installed/x64-windows/share/sdl3/SDL3headersTargets.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/.vcpkg-clion/1)/installed/x64-windows/share/sdl3/SDL3sharedTargets.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/.vcpkg-clion/1)/installed/x64-windows/share/sdl3/SDL3sharedTargets-debug.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/.vcpkg-clion/1)/installed/x64-windows/share/sdl3/SDL3sharedTargets-release.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/.vcpkg-clion/1)/installed/x64-windows/share/glad/gladConfigVersion.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/.vcpkg-clion/1)/installed/x64-windows/share/glad/gladConfig.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/.vcpkg-clion/1)/installed/x64-windows/share/glad/gladTargets.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/.vcpkg-clion/1)/installed/x64-windows/share/glad/gladTargets-debug.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/.vcpkg-clion/1)/installed/x64-windows/share/glad/gladTargets-release.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/.vcpkg-clion/1)/installed/x64-windows/share/zstd/zstdConfigVersion.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/.vcpkg-clion/1)/installed/x64-windows/share/zstd/zstdConfig.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/AppData/Local/Programs/CLion/bin/cmake/win/x64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/.vcpkg-clion/1)/installed/x64-windows/share/zstd/zstdTargets.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/.vcpkg-clion/1)/installed/x64-windows/share/zstd/zstdTargets-debug.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "C:/Users/rplaz/.vcpkg-clion/1)/installed/x64-windows/share/zstd/zstdTargets-release.cmake"
+		},
+		{
+			"path" : "entrypoint/CMakeLists.txt"
+		},
+		{
+			"path" : "entrypoint/client/CMakeLists.txt"
+		},
+		{
+			"path" : "entrypoint/test/CMakeLists.txt"
+		}
+	],
+	"kind" : "cmakeFiles",
+	"paths" : 
+	{
+		"build" : "C:/Users/rplaz/Desktop/nycatech-engine/cmake-build-debug",
+		"source" : "C:/Users/rplaz/Desktop/nycatech-engine"
+	},
+	"version" : 
+	{
+		"major" : 1,
+		"minor" : 1
+	}
+}
