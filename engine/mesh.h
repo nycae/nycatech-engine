@@ -13,9 +13,11 @@
 namespace nycatech {
 
 struct Vertex {
-  Array<Float32, 3> position;
-  Array<Float32, 3> normal;
-  Array<Float32, 2> textCord;
+  Vec3 position;
+  Vec3 normal;
+  Vec2 textCord;
+
+  Vertex(Vec3 pos = {}, Vec3 normal = {}, Vec2 textCord = {}) : position(pos), normal(normal), textCord(textCord) {}
 };
 
 struct MeshComponent : public Component {

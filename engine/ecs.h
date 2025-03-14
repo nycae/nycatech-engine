@@ -5,6 +5,8 @@
 #ifndef NYCA_TECH_ECS_H
 #define NYCA_TECH_ECS_H
 
+#include <bitset>
+
 #include "base.h"
 
 namespace nycatech {
@@ -14,39 +16,50 @@ class Entity;
 class World;
 class System;
 
+constexpr Uint64 MaxComponents = 64;
+using ComponentType = std::bitset<MaxComponents>;
+
 class Entity {
  public:
   Entity() = default;
   Entity(Entity&&) = default;
 
  public:
-  template <typename T>
-  void add_component(const SmartPtr<T>& component) {
-    components.insert({typeid(T), component});
+  template <typename T, typename... Args>
+  void add_component(Args&&... args) {
+    components.insert({get_component_type_id<T>(), make_shared<T>(std::forward<Args>(args)...)});
+    component_signature.set(get_component_type_id<T>());
   }
 
   template <typename T>
   void remove_component() {
-    components.erase(typeid(T));
+    const auto id = get_component_type_id<T>();
+    components.erase(id);
+    component_signature.reset(id);
   }
 
   template <typename T>
-  bool has_components() {
-    return components.contains(typeid(T));
+  SmartPtr<T> get_component() {
+    return static_pointer_cast<T>(components[get_component_type_id<T>()]);
   }
 
-  template <typename T, typename T1, typename... T2>
-  bool has_components() {
-    return components.contains(typeid(T)) && has_components<T1, T2...>();
-  }
-
-  template <typename... Ts>
-  auto get() {
-    return make_tuple(static_pointer_cast<Ts>(components.at(typeid(Ts)))...);
+  template <typename... T>
+  Tuple<SmartPtr<T>...> get_components() {
+    return make_tuple(get_component<T>()...);
   }
 
  public:
+  template <typename T>
+  static Uint64 get_component_type_id() {
+    static Uint64 type_id = next_component_type_id++;
+    return type_id;
+  }
+
+  inline static Uint64 next_component_type_id = 0;
+
+ public:
   Map<Type, SmartPtr<Component>> components;
+  ComponentType component_signature;
 };
 
 class World {
@@ -55,26 +68,24 @@ class World {
   void tick(Float32 time_delta);
 
  public:
-  template <typename T>
-  auto components_of_type() {
-    Vector<SmartPtr<T>> result;
-    for (auto& entity : entities) {
-      for (auto& [type, component] : entity.components) {
-        if (typeid(T) != type) continue;
-        result.push_back(dynamic_pointer_cast<T>(component));
-      }
-    }
-    return result;
-  };
-
-  template <typename T, typename... M>
+  template <typename... M>
   auto entities_with() {
-    Vector<Tuple<SmartPtr<T>, SmartPtr<M>...>> result;
+    Vector<Tuple<SmartPtr<M>...>> result;
+    ComponentType signature = get_component_signature();
+
     for (auto& entity : entities) {
-      if (!entity.has_components<T, M...>()) continue;
-      result.push_back(entity.get<T, M...>());
+      if ((entity.component_signature & signature) != signature) continue;
+      result.push_back(entity.get_components<M...>());
     }
     return result;
+  }
+
+ private:
+  template <typename... T>
+  ComponentType get_component_signature() {
+    ComponentType signature;
+    (signature.set(Entity::get_component_type_id<T>()), ...);
+    return signature;
   }
 
  public:

@@ -13,7 +13,7 @@ namespace nycatech {
 class RotatingSystem final : public System {
  public:
   void tick(World& world, Float32 time_delta) override {
-    for (auto transform : world.components_of_type<Transform>()) {
+    for (auto& [transform] : world.entities_with<Transform>()) {
       transform->rotate({0.f, 1.f, 0.f});
     }
   };
@@ -26,7 +26,8 @@ class ChangeColorSystem final : public System {
   void tick(World& world, Float32 time_delta) override {
     red_amount += 1;
     if (red_amount >= 256) red_amount = 0;
-    for (auto color : world.components_of_type<Color>()) {
+    for (auto& [color] : world.entities_with<Color>()) {
+      if (!color) continue;
       Float32 newColor = red_amount / 256.f;
       color->color[1] = newColor;
     }
@@ -45,11 +46,10 @@ void Application::run() {
     auto time_delta = std::chrono::duration_cast<ms>(Time::now() - last_frame);
     scene->update(time_delta.count() / 1000.f);
   }
-  SceneFactory::serialize_scene(scene, "../../../assets/scene.pb");
+  SceneFactory::serialize_scene(scene, "../../../assets/scene.fb");
 }
 
-Application::Application()
-    : scene(SceneFactory::create_scene("main")) {
+Application::Application() : scene(SceneFactory::create_scene("main")) {
   auto robot = MeshFactory::intance().from_file("robot", "../../../assets/robot.obj");
   if (!robot) {
     fprintf(stderr, "unable to load model");
@@ -60,14 +60,13 @@ Application::Application()
     fprintf(stderr, "unable to load model");
   }
 
-
   auto render_system = make_shared<RenderSystem>();
   render_system->buffer(ogre);
   render_system->buffer(robot);
 
   auto& entity_ogre = scene->world.create_entity();
-  entity_ogre.add_component(make_shared<MeshComponent>("ogre"));
-  entity_ogre.add_component(make_shared<Transform>(Vec3{-0.f, -0.6f, 0.f}, Vec3{0.f, 0.f, 0.f}, Vec3{0.05f, 0.05f, 0.05f}));
+  entity_ogre.add_component<MeshComponent>("ogre");
+  entity_ogre.add_component<Transform>(Vec3{-0.f, -0.6f, 0.f}, Vec3{0.f, 0.f, 0.f}, Vec3{0.05f, 0.05f, 0.05f});
 
   scene->add_system(render_system);
   scene->add_system(make_shared<RotatingSystem>());

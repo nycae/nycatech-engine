@@ -30,15 +30,12 @@ SmartPtr<Mesh> MeshFactory::load_data(const tinyobj::attrib_t& attrib, const std
   for (const auto& shape : shapes) {
     for (const auto& index : shape.mesh.indices) {
       mesh->vertices.push_back(Vertex{
-          .position
-          = {attrib.vertices[index.vertex_index * 3], attrib.vertices[index.vertex_index * 3 + 1], attrib.vertices[index.vertex_index * 3 + 2]},
-          .normal = attrib.normals.empty() ? std::array<float, 3>{0.0f, 0.0f, 0.0f}
-                                           : std::array<float, 3>{attrib.normals[index.normal_index * 3],
-                                                                  attrib.normals[index.normal_index * 3 + 1],
-                                                                  attrib.normals[index.normal_index * 3 + 2]},
-          .textCord = attrib.texcoords.empty()
-                          ? std::array<float, 2>{0.0f, 0.0f}
-                          : std::array<float, 2>{attrib.texcoords[index.texcoord_index * 2], attrib.texcoords[index.texcoord_index * 2 + 1]},
+          Vec3{attrib.vertices[index.vertex_index * 3], attrib.vertices[index.vertex_index * 3 + 1], attrib.vertices[index.vertex_index * 3 + 2]},
+          attrib.normals.empty()
+              ? Vec3{0.0f, 0.0f, 0.0f}
+              : Vec3{attrib.normals[index.normal_index * 3], attrib.normals[index.normal_index * 3 + 1], attrib.normals[index.normal_index * 3 + 2]},
+          attrib.texcoords.empty() ? Vec2{0.0f, 0.0f}
+                                   : Vec2{attrib.texcoords[index.texcoord_index * 2], attrib.texcoords[index.texcoord_index * 2 + 1]},
       });
     }
   }

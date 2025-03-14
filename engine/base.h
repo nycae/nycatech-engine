@@ -40,7 +40,7 @@ using RuntimeError = std::runtime_error;
 using StringBuilder = std::stringstream;
 using FileWritter = std::ofstream;
 using FileReader = std::ifstream;
-using Type = std::type_index;
+using Type = Uint64;
 
 template <typename T, typename K>
 using Pair = std::pair<T, K>;
@@ -60,10 +60,11 @@ using SmartPtr = std::shared_ptr<T>;
 template <typename T, Uint64 size>
 using Array = std::array<T, size>;
 
-template <typename T, typename ...M>
-using Tuple = std::tuple<T, M...>;
+template <typename... Ts>
+using Tuple = std::tuple<Ts...>;
 
 typedef Array<Float32, 3> Vec3;
+typedef Array<Float32, 2> Vec2;
 
 template <Uint64 H, Uint64 W>
 class Matrix {

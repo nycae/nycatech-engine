@@ -25,8 +25,9 @@ target_include_directories(
 target_link_libraries(
   nycatech
     PUBLIC
-      protos
       SDL3::SDL3
       glad::glad
       zstd::libzstd
+    PRIVATE
+      protos
 )

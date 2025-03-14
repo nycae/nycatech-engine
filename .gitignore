@@ -1,7 +1,7 @@
 .idea/
 buildDir/
 assets/textures/
-
+cmake-build-debug/
 CMakeLists.txt.user
 CMakeCache.txt
 CMakeFiles
