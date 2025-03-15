@@ -69,6 +69,9 @@ template <typename T>
 using Set = std::unordered_set<T>;
 
 template <typename K, typename V>
+using MultiMap = std::unordered_multimap<K, V>;
+
+template <typename K, typename V>
 using Map = std::unordered_map<K, V>;
 
 template <typename T>
@@ -90,17 +93,14 @@ class Matrix {
 
   static constexpr Matrix identity() {
     Matrix matrix;
-    for (auto i = 0ul; i < min(H, W); i++) matrix.at(i, i) = 1;
+    for (auto i = 0ul; i < min(H, W); i++)
+      matrix.at(i, i) = 1;
     return matrix;
   }
 
-  Float32& at(Uint64 i, Uint64 j) {
-    return inner.at(i * W + j);
-  };
+  Float32& at(Uint64 i, Uint64 j) { return inner.at(i * W + j); };
 
-  const Float32& at(Uint64 i, Uint64 j) const {
-    return inner.at(i * W + j);
-  };
+  const Float32& at(Uint64 i, Uint64 j) const { return inner.at(i * W + j); };
 
   Matrix& operator=(const Matrix& other) = default;
 

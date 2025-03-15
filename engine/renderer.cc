@@ -14,7 +14,7 @@ Renderer::Renderer() {
     return;
   }
 
-  window = SDL_CreateWindow("nycatech", 1600, 800, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+  window = SDL_CreateWindow("nycatech", 1600, 900, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
   if (!window) {
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create window: %s", SDL_GetError());
     return;
@@ -39,23 +39,24 @@ Renderer::~Renderer() {
   SDL_Quit();
 }
 
-void Renderer::render(const SmartPtr<MeshComponent>& mesh_comp, const SmartPtr<Transform>& transform, const SmartPtr<Color>& color) {
-  const auto sum = transform->rotation[0] + transform->rotation[1] + transform->rotation[2];
+void Renderer::render(const SmartPtr<MeshComponent>& mesh_comp, const SmartPtr<Transform>& transform) {
+  if (!mesh_comp) {
+    return;
+  }
+
   const auto mesh = MeshFactory::instance().get(mesh_comp->name);
   glPushMatrix();
-  if (color) glColor3f(color->color[0], color->color[1], color->color[2]);
-  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   if (transform) {
-    glTranslatef(transform->position[0], transform->position[1], transform->position[2]);
-    glRotatef(sum, transform->rotation[0] / sum, transform->rotation[1] / sum, transform->rotation[2] / sum);
-    glScalef(transform->local_scale[0], transform->local_scale[1], transform->local_scale[2]);
+    auto matrix = transform->transform_matrix();
+    glLoadMatrixf(matrix.inner.data());
   }
   glBindVertexArray(mesh->vao);
   glDrawArrays(GL_TRIANGLES, 0, mesh->vertices.size());
   glPopMatrix();
 }
 
-void Renderer::buffer(const SmartPtr<Mesh>& mesh) {
+bool Renderer::buffer(SmartPtr<Mesh> mesh) {
   glGenVertexArrays(1, &mesh->vao);
   glBindVertexArray(mesh->vao);
   glGenBuffers(1, &mesh->vbo);
@@ -67,45 +68,84 @@ void Renderer::buffer(const SmartPtr<Mesh>& mesh) {
   glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void*)(sizeof(float) * 3));
   glEnableVertexAttribArray(2);
   glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void*)(sizeof(float) * 6));
+  return true;
 }
 
 Renderer& Renderer::instance() {
   static Renderer renderer;
   return renderer;
 }
+bool Renderer::buffer(SmartPtr<ShaderProgram> program) {
+  program->id = glCreateProgram();
+  for (const auto& shader : program->shaders) {
+    glAttachShader(program->id, shader->id);
+  }
+  glLinkProgram(program->id);
+  GLint success;
+  glGetProgramiv(program->id, GL_LINK_STATUS, &success);
+  return success;
+}
+
+bool Renderer::compile(SmartPtr<Shader> shader) {
+  const char* source = shader->source.c_str();
+  shader->id = glCreateShader(shader->type);
+  glShaderSource(shader->id, 1, &source, nullptr);
+  glCompileShader(shader->id);
+  GLint success;
+  glGetShaderiv(shader->id, GL_COMPILE_STATUS, &success);
+  return success;
+}
 
 void RenderSystem::tick(World& world, Float32 time_delta) {
-  SmartPtr<Camera> main_camera;
-  SmartPtr<Transform> camera_transform;
-  for (const auto& [camera, camera_transf]: world.entities_with<Camera, Transform>()) {
-    main_camera = camera;
-    camera_transform = camera_transf;
-  }
-  //gluPerspective(main_camera->fov, main_camera->aspect_ratio, main_camera->near_plane, main_camera->far_plane);
-  auto camera_matrix = camera_transform->transform_matrix();
-  auto projection_matrix = main_camera->projection_matrix();
   glLoadIdentity();
   glPushMatrix();
-  glMatrixMode(GL_PROJECTION);
-  glLoadMatrixf(&projection_matrix.inner[0]);
-  glLoadMatrixf(&camera_matrix.inner[0]);
+
+  SmartPtr<Camera> main_camera;
+  SmartPtr<Transform> camera_transform;
+  for (const auto& [camera, camera_transf] : world.entities_with<Camera, Transform>()) {
+    if (!camera->is_main_camera) {
+      continue;
+    }
+    main_camera = camera;
+    camera_transform = camera_transf;
+    break;
+  }
+
+  if (main_camera) {
+    auto camera_matrix = camera_transform->transform_matrix();
+    auto projection_matrix = main_camera->projection_matrix();
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadMatrixf(&projection_matrix.inner[0]);
+    glLoadMatrixf(&camera_matrix.inner[0]);
+  }
   glMatrixMode(GL_MODELVIEW);
-  glPopMatrix();
-  glPushMatrix();
-  for (const auto& [mesh, transform, color] : world.entities_with<MeshComponent, Transform, Color>()) {
-    renderer.render(mesh, transform, color);
+  for (const auto& [mesh, transform, shader] :
+       world.component_of_entity_or_nullptr<MeshComponent, Transform, ShaderComponent>()) {
+    if (!mesh) {
+      continue;
+    }
+    if (shader) {
+      const auto shader_program = ShaderFactory::instance().get(shader->name);
+      glUseProgram(shader_program->id);
+    }
+    renderer.render(mesh, transform);
   }
   glPopMatrix();
   renderer.draw_frame();
 }
 
-void RenderSystem::buffer(const SmartPtr<Mesh>& mesh) {
-  renderer.buffer(mesh);
-}
-
 RenderSystem::RenderSystem() {
   for (const auto& [_, mesh] : MeshFactory::instance().meshes) {
-    buffer(mesh);
+    renderer.buffer(mesh);
+  }
+
+  for (const auto& [_, shader] : ShaderFactory::instance().shaders) {
+    renderer.compile(shader);
+  }
+
+  for (const auto& [_, shader_program] : ShaderFactory::instance().shader_programs) {
+    renderer.buffer(shader_program);
   }
 }
 

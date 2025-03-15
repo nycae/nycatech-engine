@@ -12,11 +12,17 @@
 
 namespace nycatech {
 
-void Scene::add_system(const SmartPtr<System>& system) { world.systems.push_back(system); }
+void Scene::add_system(const SmartPtr<System>& system) {
+  world.systems.push_back(system);
+}
 
-void Scene::update(Float32 time_delta) { world.tick(time_delta); }
+void Scene::update(Float32 time_delta) {
+  world.tick(time_delta);
+}
 
-Entity& Scene::create_entity() { return world.create_entity(); }
+Entity& Scene::create_entity() {
+  return world.create_entity();
+}
 
 void Scene::load() {}
 
@@ -41,7 +47,9 @@ SceneManager& SceneManager::instance() {
   return instance;
 }
 
-void SceneManager::add_scene(const String& scene_name, const SmartPtr<Scene>& scene) { scenes.insert(make_pair(scene_name, scene)); }
+void SceneManager::add_scene(const String& scene_name, const SmartPtr<Scene>& scene) {
+  scenes.insert(make_pair(scene_name, scene));
+}
 
 bool SceneFactory::serialize_scene(const SmartPtr<Scene>& scene, const String& file_path) {
   flatbuffers::FlatBufferBuilder builder(1 << 20);  // 1mb
@@ -64,6 +72,16 @@ bool SceneFactory::serialize_scene(const SmartPtr<Scene>& scene, const String& f
         auto offset_mesh = schemas::CreateMesh(builder, mesh_name);
         offset_components.push_back(offset_mesh.Union());
         component_types.push_back(schemas::Component::Component_Mesh);
+      } else if (auto shader = dynamic_cast<ShaderComponent*>(component.get())) {
+        auto shader_name = builder.CreateString(shader->name);
+        auto offset_shader = schemas::CreateMesh(builder, shader_name);
+        offset_components.push_back(offset_shader.Union());
+        component_types.push_back(schemas::Component::Component_Shader);
+      } else if (auto camera = dynamic_cast<Camera*>(component.get())) {
+        auto offset_camera =
+            schemas::CreateCamera(builder, camera->fov, camera->aspect_ratio, camera->near_plane, camera->far_plane, camera->is_main_camera);
+        offset_components.push_back(offset_camera.Union());
+        component_types.push_back(schemas::Component::Component_Camera);
       }
     }
     auto serialized_types = builder.CreateVector(component_types);
@@ -114,19 +132,35 @@ SmartPtr<Scene> SceneFactory::deserialize_scene(const String& name, const String
       auto component_type_deserialized = (*components_types_deserialized)[i];
       switch (component_type_deserialized) {
         case schemas::Component::Component_Transform: {
-          auto transform_deserialized = static_cast<const schemas::Transform*>(component_deserialized);
-          auto position = transform_deserialized->position();
-          auto rotation = transform_deserialized->rotation();
-          auto scale = transform_deserialized->scale();
-          entity.add_component<Transform>(Vec3{position->x(), position->y(), position->z()},
-                                          Vec3{rotation->x(), rotation->y(), rotation->z()},
+          const auto transform_deserialized = static_cast<const schemas::Transform*>(component_deserialized);
+          const auto position = transform_deserialized->position();
+          const auto rotation = transform_deserialized->rotation();
+          const auto scale = transform_deserialized->scale();
+          entity.add_component<Transform>(Vec3{position->x(), position->y(), position->z()}, Vec3{rotation->x(), rotation->y(), rotation->z()},
                                           Vec3{scale->x(), scale->y(), scale->z()});
           break;
         }
         case schemas::Component::Component_Mesh: {
-          auto mesh_deserialized = static_cast<const schemas::Mesh*>(component_deserialized);
-          auto mesh_name = mesh_deserialized->name()->c_str();
+          const auto mesh_deserialized = static_cast<const schemas::Mesh*>(component_deserialized);
+          const auto mesh_name = mesh_deserialized->name()->str();
           entity.add_component<MeshComponent>(mesh_name);
+          break;
+        }
+        case schemas::Component::Component_Camera: {
+          const auto camera_deserialized = static_cast<const schemas::Camera*>(component_deserialized);
+          const auto fov = camera_deserialized->fov();
+          const auto aspect_ratio = camera_deserialized->aspect_ratio();
+          const auto near_plane = camera_deserialized->near_plane();
+          const auto far_plane = camera_deserialized->far_plane();
+          const auto is_main_camera = camera_deserialized->is_main_camera();
+          entity.add_component<Camera>(fov, aspect_ratio, near_plane, far_plane, is_main_camera);
+          break;
+        }
+        case schemas::Component::Component_Shader: {
+          const auto shader_deserialized = static_cast<const schemas::Shader*> (component_deserialized);
+          const auto shader_name = shader_deserialized->name()->str();
+          entity.add_component<ShaderComponent>(shader_name);
+          break;
         }
         default:
           break;

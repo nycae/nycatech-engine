@@ -6,6 +6,7 @@
 #define NYCA_TECH_MESH_H
 
 #include <array>
+#include <utility>
 
 #include "transform.h"
 
@@ -16,11 +17,12 @@ struct Vertex {
   Vec3 normal;
   Vec2 tex_coord;
 
-  Vertex(Vec3 pos = {}, Vec3 normal = {}, Vec2 tex_coord = {}) : position(pos), normal(normal), tex_coord(tex_coord) {}
+  explicit Vertex(Vec3 position = {}, Vec3 normal = {}, Vec2 tex_coord = {})
+      : position(position), normal(normal), tex_coord(tex_coord) {}
 };
 
 struct MeshComponent : public Component {
-  MeshComponent(const String& name) : name(name) {}
+  explicit MeshComponent(String name) : name(move(name)) {}
   String name;
 };
 

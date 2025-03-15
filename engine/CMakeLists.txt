@@ -15,6 +15,8 @@ add_library(
     scene.cc
     transform.cc
     math.cc
+  shader.cc
+  shader.h
 )
 
 target_include_directories(

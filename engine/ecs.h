@@ -84,7 +84,17 @@ class World {
     ComponentType signature = get_component_signature<M...>();
 
     for (auto& entity : entities) {
-      if ((entity.component_signature & signature) != signature) continue;
+      if ((entity.component_signature & signature) != signature)
+        continue;
+      result.push_back(entity.get_components<M...>());
+    }
+    return result;
+  }
+
+  template <typename... M>
+  auto component_of_entity_or_nullptr() {
+    Vector<Tuple<SmartPtr<M>...>> result;
+    for (auto& entity : entities) {
       result.push_back(entity.get_components<M...>());
     }
     return result;

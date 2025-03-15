@@ -13,13 +13,9 @@
 
 #include "base.h"
 #include "mesh.h"
+#include "shader.h"
 
 namespace nycatech {
-
-struct Color final : public Component {
-  Color(Array<Float32, 3> color) : color(color) {};
-  Array<Float32, 3> color;
-};
 
 struct Camera final : public Component {
   TransformMatrix projection_matrix() const;
@@ -34,6 +30,7 @@ struct Camera final : public Component {
         near_plane(near_plane),
         far_plane(far_plane),
         is_main_camera(is_main_camera) {}
+
   float fov = 90.0f;
   float aspect_ratio = 1600.0f / 900.0f;
   float near_plane = 0.1f;
@@ -51,8 +48,10 @@ class Renderer {
 
  public:
   void draw_frame();
-  void render(const SmartPtr<MeshComponent>& mesh, const SmartPtr<Transform>& transform, const SmartPtr<Color>& color);
-  void buffer(const SmartPtr<Mesh>& mesh);
+  void render(const SmartPtr<MeshComponent>& mesh, const SmartPtr<Transform>& transform);
+  bool compile(SmartPtr<Shader> shader);
+  bool buffer(SmartPtr<Mesh> mesh);
+  bool buffer(SmartPtr<ShaderProgram> shader);
 
  public:
   SDL_Window* window;
@@ -66,7 +65,6 @@ class RenderSystem final : public System {
 
  public:
   void tick(World& world, Float32 time_delta) override;
-  void buffer(const SmartPtr<Mesh>& mesh);
 
  private:
   Renderer& renderer = Renderer::instance();
