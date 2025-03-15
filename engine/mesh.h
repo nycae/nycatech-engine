@@ -7,7 +7,6 @@
 
 #include <array>
 
-#include "tiny_obj_loader.h"
 #include "transform.h"
 
 namespace nycatech {
@@ -15,9 +14,9 @@ namespace nycatech {
 struct Vertex {
   Vec3 position;
   Vec3 normal;
-  Vec2 textCord;
+  Vec2 tex_coord;
 
-  Vertex(Vec3 pos = {}, Vec3 normal = {}, Vec2 textCord = {}) : position(pos), normal(normal), textCord(textCord) {}
+  Vertex(Vec3 pos = {}, Vec3 normal = {}, Vec2 tex_coord = {}) : position(pos), normal(normal), tex_coord(tex_coord) {}
 };
 
 struct MeshComponent : public Component {
@@ -25,7 +24,7 @@ struct MeshComponent : public Component {
   String name;
 };
 
-struct Mesh : public Component {
+struct Mesh {
   Vector<Vertex> vertices;
   Uint32 vao = 0;
   Uint32 vbo = 0;
@@ -33,16 +32,14 @@ struct Mesh : public Component {
 
 class MeshFactory {
  public:
-  static MeshFactory& intance();
+  static MeshFactory& instance();
 
  public:
   SmartPtr<Mesh> from_file(const String& name, const String& path);
+  SmartPtr<Mesh> from_string(const String& name, const String& content);
   SmartPtr<Mesh> get(const String& name);
 
- private:
-  static SmartPtr<Mesh> load_data(const tinyobj::attrib_t& attrib, const std::vector<tinyobj::shape_t>& shapes);
-
- private:
+ public:
   Map<String, SmartPtr<Mesh>> meshes;
 };
 

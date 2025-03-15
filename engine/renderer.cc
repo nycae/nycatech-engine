@@ -39,15 +39,17 @@ Renderer::~Renderer() {
   SDL_Quit();
 }
 
-void Renderer::render(const String& mesh_name, const SmartPtr<Transform>& transform) {
+void Renderer::render(const SmartPtr<MeshComponent>& mesh_comp, const SmartPtr<Transform>& transform, const SmartPtr<Color>& color) {
   const auto sum = transform->rotation[0] + transform->rotation[1] + transform->rotation[2];
-  const auto mesh = MeshFactory::intance().get(mesh_name);
+  const auto mesh = MeshFactory::instance().get(mesh_comp->name);
   glPushMatrix();
-  //  glColor3f(color->color[0], color->color[1], color->color[2]);
+  if (color) glColor3f(color->color[0], color->color[1], color->color[2]);
   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-  glTranslatef(transform->position[0], transform->position[1], transform->position[2]);
-  glRotatef(sum, transform->rotation[0] / sum, transform->rotation[1] / sum, transform->rotation[2] / sum);
-  glScalef(transform->local_scale[0], transform->local_scale[1], transform->local_scale[2]);
+  if (transform) {
+    glTranslatef(transform->position[0], transform->position[1], transform->position[2]);
+    glRotatef(sum, transform->rotation[0] / sum, transform->rotation[1] / sum, transform->rotation[2] / sum);
+    glScalef(transform->local_scale[0], transform->local_scale[1], transform->local_scale[2]);
+  }
   glBindVertexArray(mesh->vao);
   glDrawArrays(GL_TRIANGLES, 0, mesh->vertices.size());
   glPopMatrix();
@@ -73,12 +75,34 @@ Renderer& Renderer::instance() {
 }
 
 void RenderSystem::tick(World& world, Float32 time_delta) {
-  for (const auto& [mesh, transform] : world.entities_with<MeshComponent, Transform>()) {
-    renderer.render(mesh->name, transform);
+  for (const auto& [mesh, transform, color] : world.entities_with<MeshComponent, Transform, Color>()) {
+    renderer.render(mesh, transform, color);
   }
   renderer.draw_frame();
 }
 
-void RenderSystem::buffer(const SmartPtr<Mesh>& mesh) { renderer.buffer(mesh); }
+void RenderSystem::buffer(const SmartPtr<Mesh>& mesh) {
+  renderer.buffer(mesh);
+}
 
-}  // namespace nycatech::render
+RenderSystem::RenderSystem() {
+  for (const auto& [_, mesh] : MeshFactory::instance().meshes) {
+    buffer(mesh);
+  }
+}
+
+TransformMatrix Camera::projection_matrix() const {
+  const float tan_half_fov = std::tan(0.5f * fov * 3.14159265358979323846f / 180.0f);
+  const float range = near_plane - far_plane;
+
+  TransformMatrix projection_matrix;
+  projection_matrix.at(0, 0) = 1.0f / (aspect_ratio * tan_half_fov);
+  projection_matrix.at(1, 1) = 1.0f / tan_half_fov;
+  projection_matrix.at(2, 2) = (-near_plane - far_plane) / range;
+  projection_matrix.at(2, 3) = 2.0f * far_plane * near_plane / range;
+  projection_matrix.at(3, 2) = 1.0f;
+
+  return projection_matrix;
+}
+
+}  // namespace nycatech

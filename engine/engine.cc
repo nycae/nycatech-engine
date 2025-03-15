@@ -50,23 +50,25 @@ void Application::run() {
 }
 
 Application::Application() : scene(SceneFactory::create_scene("main")) {
-  auto robot = MeshFactory::intance().from_file("robot", "../../../assets/robot.obj");
-  if (!robot) {
-    fprintf(stderr, "unable to load model");
-  }
-
-  auto ogre = MeshFactory::intance().from_file("ogre", "../../../assets/ogre.obj");
-  if (!ogre) {
-    fprintf(stderr, "unable to load model");
-  }
+  post(tp, []() {
+    auto robot = MeshFactory::instance().from_file("robot", "../../../assets/robot.obj");
+    if (!robot) fprintf(stderr, "unable to load model");
+  });
+  post(tp, []() {
+    auto ogre = MeshFactory::instance().from_file("ogre", "../../../assets/ogre.obj");
+    if (!ogre) fprintf(stderr, "unable to load model");
+  });
+  tp.join();
 
   auto render_system = make_shared<RenderSystem>();
-  render_system->buffer(ogre);
-  render_system->buffer(robot);
-
   auto& entity_ogre = scene->world.create_entity();
   entity_ogre.add_component<MeshComponent>("ogre");
   entity_ogre.add_component<Transform>(Vec3{-0.f, -0.6f, 0.f}, Vec3{0.f, 0.f, 0.f}, Vec3{0.05f, 0.05f, 0.05f});
+  entity_ogre.add_component<Color>(Vec3{0.1, 0.3, 0.7});
+
+  auto& entity_camera = scene->world.create_entity();
+  entity_camera.add_component<Transform>();
+  entity_camera.add_component<Camera>();
 
   scene->add_system(render_system);
   scene->add_system(make_shared<RotatingSystem>());

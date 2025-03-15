@@ -22,6 +22,7 @@ class Application {
 
  private:
   SmartPtr<Scene> scene;
+  ThreadPool tp;
   SDL_Event event;
 };
 

@@ -22,12 +22,23 @@ struct Color final : public Component {
 };
 
 struct Camera final : public Component {
-  Array<Float32, 4> view_matrix;
-  Array<Float32, 4> projection_matrix;
+  TransformMatrix projection_matrix() const;
+
+  Camera(float fov = 90.0f,
+         float aspect_ratio = 1600.0f / 900.0f,
+         float near_plane = 0.1f,
+         float far_plane = 1000.0f,
+         bool is_main_camera = false)
+      : fov(fov),
+        aspect_ratio(aspect_ratio),
+        near_plane(near_plane),
+        far_plane(far_plane),
+        is_main_camera(is_main_camera) {}
   float fov = 90.0f;
+  float aspect_ratio = 1600.0f / 900.0f;
   float near_plane = 0.1f;
   float far_plane = 1000.0f;
-  bool isMainCamera = false;
+  bool is_main_camera = false;
 };
 
 class Renderer {
@@ -40,7 +51,7 @@ class Renderer {
 
  public:
   void draw_frame();
-  void render(const String& mesh_name, const SmartPtr<Transform>& transform);
+  void render(const SmartPtr<MeshComponent>& mesh, const SmartPtr<Transform>& transform, const SmartPtr<Color>& color);
   void buffer(const SmartPtr<Mesh>& mesh);
 
  public:
@@ -51,6 +62,9 @@ class Renderer {
 
 class RenderSystem final : public System {
  public:
+  RenderSystem();
+
+ public:
   void tick(World& world, Float32 time_delta) override;
   void buffer(const SmartPtr<Mesh>& mesh);
 
@@ -58,6 +72,6 @@ class RenderSystem final : public System {
   Renderer& renderer = Renderer::instance();
 };
 
-}  // namespace nycatech::render
+}  // namespace nycatech
 
 #endif  // NYCA_TECH_RENDERER_H

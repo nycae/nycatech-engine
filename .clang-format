@@ -1,6 +1,2 @@
-BasedOnStyle: Google
-ColumnLimit: 150
-BinPackArguments: false
-BinPackParameters: false
-BreakBeforeBinaryOperators: All
-BreakBeforeTernaryOperators: true
+BasedOnStyle: Chromium
+ColumnLimit: 120

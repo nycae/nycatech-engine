@@ -5,7 +5,12 @@
 #ifndef NYCA_TECH_BASE_H
 #define NYCA_TECH_BASE_H
 
+#define _USE_MATH_DEFINES
+
 #include <array>
+#include <boost/asio/post.hpp>
+#include <boost/asio/thread_pool.hpp>
+#include <cmath>
 #include <cstdint>
 #include <exception>
 #include <fstream>
@@ -26,6 +31,16 @@ namespace nycatech {
 #define INLINE inline
 #endif
 
+using boost::asio::post;
+using std::dynamic_pointer_cast;
+using std::getline;
+using std::make_pair;
+using std::make_shared;
+using std::make_tuple;
+using std::min;
+using std::move;
+using std::static_pointer_cast;
+
 using Uint8 = uint8_t;
 using Uint16 = uint16_t;
 using Uint32 = uint32_t;
@@ -38,9 +53,11 @@ using String = std::string;
 using Exception = std::exception;
 using RuntimeError = std::runtime_error;
 using StringBuilder = std::stringstream;
+using StringReader = std::istringstream;
 using FileWritter = std::ofstream;
 using FileReader = std::ifstream;
 using Type = Uint64;
+using ThreadPool = boost::asio::thread_pool;
 
 template <typename T, typename K>
 using Pair = std::pair<T, K>;
@@ -70,8 +87,20 @@ template <Uint64 H, Uint64 W>
 class Matrix {
  public:
   Matrix(const Array<Float32, H * W>& init = {}) : inner(init) {};
-  Float32& at(Uint64 i, Uint64 j) { return inner.at(i * W + j); };
-  const Float32& at(Uint64 i, Uint64 j) const { return inner.at(i * W + j); };
+
+  static constexpr Matrix identity() {
+    Matrix matrix;
+    for (auto i = 0ul; i < min(H, W); i++) matrix.at(i, i) = 1;
+    return matrix;
+  }
+
+  Float32& at(Uint64 i, Uint64 j) {
+    return inner.at(i * W + j);
+  };
+
+  const Float32& at(Uint64 i, Uint64 j) const {
+    return inner.at(i * W + j);
+  };
 
   Matrix& operator=(const Matrix& other) = default;
 
@@ -103,12 +132,11 @@ class Matrix {
   Array<Float32, H * W> inner;
 };
 
-using std::make_pair;
-using std::make_shared;
-using std::make_tuple;
-using std::move;
-using std::static_pointer_cast;
-using std::dynamic_pointer_cast;
+Vec3 normalize(const Vec3& v);
+Vec3 cross(const Vec3& a, const Vec3& b);
+float dot(const Vec3& a, const Vec3& b);
+
+using TransformMatrix = Matrix<4, 4>;
 
 }  // namespace nycatech
 
