@@ -128,7 +128,7 @@ class Matrix {
     return m;
   }
 
- private:
+ public:
   Array<Float32, H * W> inner;
 };
 

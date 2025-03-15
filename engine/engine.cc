@@ -13,7 +13,7 @@ namespace nycatech {
 class RotatingSystem final : public System {
  public:
   void tick(World& world, Float32 time_delta) override {
-    for (auto& [transform] : world.entities_with<Transform>()) {
+    for (auto& [transform, _] : world.entities_with<Transform, MeshComponent>()) {
       transform->rotate({0.f, 1.f, 0.f});
     }
   };

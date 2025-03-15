@@ -48,6 +48,16 @@ class Entity {
     return make_tuple(get_component<T>()...);
   }
 
+  template <typename T>
+  bool has_component() const {
+    return components.contains(get_component_type_id<T>());
+  }
+
+  template <typename... T>
+  bool has_components() const {
+    return (has_components<T>() && ...);
+  }
+
  public:
   template <typename T>
   static Uint64 get_component_type_id() {
@@ -71,7 +81,7 @@ class World {
   template <typename... M>
   auto entities_with() {
     Vector<Tuple<SmartPtr<M>...>> result;
-    ComponentType signature = get_component_signature();
+    ComponentType signature = get_component_signature<M...>();
 
     for (auto& entity : entities) {
       if ((entity.component_signature & signature) != signature) continue;

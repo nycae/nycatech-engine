@@ -75,9 +75,27 @@ Renderer& Renderer::instance() {
 }
 
 void RenderSystem::tick(World& world, Float32 time_delta) {
+  SmartPtr<Camera> main_camera;
+  SmartPtr<Transform> camera_transform;
+  for (const auto& [camera, camera_transf]: world.entities_with<Camera, Transform>()) {
+    main_camera = camera;
+    camera_transform = camera_transf;
+  }
+  //gluPerspective(main_camera->fov, main_camera->aspect_ratio, main_camera->near_plane, main_camera->far_plane);
+  auto camera_matrix = camera_transform->transform_matrix();
+  auto projection_matrix = main_camera->projection_matrix();
+  glLoadIdentity();
+  glPushMatrix();
+  glMatrixMode(GL_PROJECTION);
+  glLoadMatrixf(&projection_matrix.inner[0]);
+  glLoadMatrixf(&camera_matrix.inner[0]);
+  glMatrixMode(GL_MODELVIEW);
+  glPopMatrix();
+  glPushMatrix();
   for (const auto& [mesh, transform, color] : world.entities_with<MeshComponent, Transform, Color>()) {
     renderer.render(mesh, transform, color);
   }
+  glPopMatrix();
   renderer.draw_frame();
 }
 
