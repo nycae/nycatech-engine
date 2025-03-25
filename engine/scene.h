@@ -48,9 +48,12 @@ class SceneManager {
 
 class SceneFactory {
  public:
-  static SmartPtr<Scene> create_scene(const String& name) { return make_shared<Scene>(name); }
   static bool serialize_scene(const SmartPtr<Scene>& scene, const String& file_path);
   static SmartPtr<Scene> deserialize_scene(const String& name, const String& file_path);
+  static SmartPtr<Scene> create_scene(const String& name) {
+    SmartPtr<Scene> scene(new Scene(name));
+    return scene;
+  }
 };
 
 }  // namespace nycatech

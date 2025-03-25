@@ -14,60 +14,45 @@
 #include "base.h"
 #include "mesh.h"
 #include "shader.h"
+#include "texture.h"
 
 namespace nycatech {
 
 struct Camera final : public Component {
-  TransformMatrix projection_matrix() const;
+  Mat4 projection_matrix() const;
 
   Camera(float fov = 90.0f,
          float aspect_ratio = 1600.0f / 900.0f,
          float near_plane = 0.1f,
          float far_plane = 1000.0f,
-         bool is_main_camera = false)
+         bool  is_main_camera = false)
       : fov(fov),
         aspect_ratio(aspect_ratio),
         near_plane(near_plane),
         far_plane(far_plane),
-        is_main_camera(is_main_camera) {}
+        is_main_camera(is_main_camera)
+  {
+  }
 
   float fov = 90.0f;
   float aspect_ratio = 1600.0f / 900.0f;
   float near_plane = 0.1f;
   float far_plane = 1000.0f;
-  bool is_main_camera = false;
+  bool  is_main_camera = false;
 };
 
-class Renderer {
- public:
-  static Renderer& instance();
-
- private:
+class Renderer final : public System {
+public:
   Renderer();
   ~Renderer();
 
- public:
-  void draw_frame();
-  void render(const SmartPtr<MeshComponent>& mesh, const SmartPtr<Transform>& transform);
-  bool compile(SmartPtr<Shader> shader);
-  bool buffer(SmartPtr<Mesh> mesh);
-  bool buffer(SmartPtr<ShaderProgram> shader);
+public:
+  virtual void tick(World &world, Float32 time_delta) override;
 
- public:
-  SDL_Window* window;
-  SDL_Surface* surface;
+public:
+  SDL_Window   *window;
+  SDL_Surface  *surface;
   SDL_GLContext context;
-};
-
-class RenderSystem final : public System {
- public:
-  RenderSystem();
-
- public:
-  void tick(World& world, Float32 time_delta) override;
-
- private:
-  Renderer& renderer = Renderer::instance();
 };
 
 }  // namespace nycatech

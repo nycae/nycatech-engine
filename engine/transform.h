@@ -11,19 +11,16 @@
 namespace nycatech {
 
 struct Transform : public Component {
-  Transform(Vec3 position = {0.f, 0.f, 0.f}, Vec3 rotation = {0.f, 0.f, 0.f}, Vec3 scale = {1.f, 1.f, 1.f});
+  Transform(Vec3 position = {}, Vec3 rotation = {}, Vec3 scale = { 1.f, 1.f, 1.f });
 
-  TransformMatrix transform_matrix();
-  TransformMatrix view_matrix();
-
+  float* data();
+  Mat4   view_matrix();
 
   void translate(Vec3 pos);
   void rotate(Vec3 rot);
   void scale(Vec3 scale);
 
-  Vec3 position;
-  Vec3 rotation;
-  Vec3 local_scale;
+  Mat4 transform_matrix;
 };
 
 }  // namespace nycatech

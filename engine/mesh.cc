@@ -4,80 +4,110 @@
 
 #include "mesh.h"
 
+#include <glad/glad.h>
+
+#include "cgltf.h"
+
 namespace nycatech {
 
-SmartPtr<Mesh> MeshFactory::from_file(const String& name, const String& path) {
-  FileReader file(path);
-  String file_content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-  return from_string(name, file_content);
+SmartPtr<Mesh> Mesh::from_file(const String& path)
+{
+  FileReader file(path, std::ios::binary);
+  String     file_content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+  return from_string(file_content);
 }
 
-SmartPtr<Mesh> MeshFactoryfrom_string(const StringBuilder& stream) { return nullptr; }
+SmartPtr<Mesh> Mesh::from_string(const String& content)
+{
+  auto          mesh = make_shared<Mesh>();
+  cgltf_options options = {};
+  cgltf_data*   data = nullptr;
+  cgltf_result  result = cgltf_parse(&options, content.data(), content.size(), &data);
 
-MeshFactory& MeshFactory::instance() {
-  static MeshFactory instance;
-  return instance;
-}
+  if (result != cgltf_result_success) return nullptr;
 
-SmartPtr<Mesh> MeshFactory::get(const String& name) { return meshes[name]; }
+  result = cgltf_load_buffers(&options, data, nullptr);
+  if (result != cgltf_result_success) {
+    cgltf_free(data);
+    return nullptr;
+  }
 
-SmartPtr<Mesh> MeshFactory::from_string(const String& name, const String& content) {
-  auto mesh = make_shared<Mesh>();
+  cgltf_mesh*      gltf_mesh = &data->meshes[0];
+  cgltf_primitive* prim = &gltf_mesh->primitives[0];
 
-  Vector<Vec3> temp_positions;
-  Vector<Vec3> temp_normals;
-  Vector<Vec2> temp_tex_coords;
-  Vector<String> face_elems;
+  cgltf_accessor* pos_accessor = nullptr;
+  cgltf_accessor* normal_accessor = nullptr;
+  cgltf_accessor* uv_accessor = nullptr;
 
-  String line;
-  StringReader file(content);
-
-  while (getline(file, line)) {
-    String type;
-    StringReader iss(line);
-    iss >> type;
-
-    if (type == "v") {
-      Vec3 position;
-      iss >> position[0] >> position[1] >> position[2];
-      temp_positions.push_back(position);
-    } else if (type == "vn") {
-      Vec3 normal;
-      iss >> normal[0] >> normal[1] >> normal[2];
-      temp_normals.push_back(normal);
-    } else if (type == "vt") {
-      Vec2 tex_coord;
-      iss >> tex_coord[0] >> tex_coord[1];
-      temp_tex_coords.push_back(tex_coord);
-    } else if (type == "f") {
-      String face_data;
-      while (iss >> face_data) {
-        face_elems.push_back(face_data);
-      }
+  for (size_t i = 0; i < prim->attributes_count; ++i) {
+    cgltf_attribute* attr = &prim->attributes[i];
+    switch (attr->type) {
+      case cgltf_attribute_type_position:
+        pos_accessor = attr->data;
+        break;
+      case cgltf_attribute_type_normal:
+        normal_accessor = attr->data;
+        break;
+      case cgltf_attribute_type_texcoord:
+        uv_accessor = attr->data;
+        break;
+      default:
+        break;
     }
   }
 
-  for (const auto& face : face_elems) {
-    String vertex_data;
-    StringReader face_stream(face);
-    Array<int, 3> indices = {-1, -1, -1};
-
-    for (int i = 0; i < 3; ++i) {
-      getline(face_stream, vertex_data, '/');
-      if (vertex_data.empty()) continue;
-      indices[i] = stoi(vertex_data) - 1;
-    }
-
-    Vertex vertex;
-    if (indices[0] >= 0 && indices[0] < temp_positions.size()) vertex.position = temp_positions[indices[0]];
-    if (indices[1] >= 0 && indices[1] < temp_tex_coords.size()) vertex.tex_coord = temp_tex_coords[indices[1]];
-    if (indices[2] >= 0 && indices[2] < temp_normals.size()) vertex.normal = temp_normals[indices[2]];
-
-    mesh->vertices.push_back(vertex);
+  if (!pos_accessor || !normal_accessor || !uv_accessor) {
+    cgltf_free(data);
+    return nullptr;
   }
 
-  meshes.insert({name, mesh});
-  return meshes[name];
+  mesh->vertices.resize(pos_accessor->count);
+  for (size_t i = 0; i < pos_accessor->count; ++i) {
+    auto pos
+        = (float*)((char*)pos_accessor->buffer_view->buffer->data + pos_accessor->offset + pos_accessor->stride * i);
+    mesh->vertices[i].position = glm::vec3(pos[0], pos[1], pos[2]);
+    auto normal = (float*)((char*)normal_accessor->buffer_view->buffer->data + normal_accessor->offset
+                           + normal_accessor->stride * i);
+    mesh->vertices[i].normal = glm::vec3(normal[0], normal[1], normal[2]);
+    auto uv = (float*)((char*)uv_accessor->buffer_view->buffer->data + uv_accessor->offset + uv_accessor->stride * i);
+    mesh->vertices[i].tex_coord = glm::vec2(uv[0], uv[1]);
+  }
+
+  if (prim->indices) {
+    auto indices = (unsigned short*)((char*)prim->indices->buffer_view->buffer->data + prim->indices->offset);
+    mesh->indices.assign(indices, indices + prim->indices->count);
+  }
+
+  glGenVertexArrays(1, &mesh->vao);
+  glGenBuffers(1, &mesh->vbo);
+  glGenBuffers(1, &mesh->ebo);
+
+  glBindVertexArray(mesh->vao);
+  glBindBuffer(GL_ARRAY_BUFFER, mesh->vbo);
+  glBufferData(GL_ARRAY_BUFFER, mesh->vertices.size() * sizeof(Vertex), mesh->vertices.data(), GL_STATIC_DRAW);
+
+  if (!mesh->indices.empty()) {
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh->indices.size() * sizeof(Uint32), mesh->indices.data(), GL_STATIC_DRAW);
+  }
+
+  glEnableVertexAttribArray(0);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position));
+
+  glEnableVertexAttribArray(1);
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
+
+  glEnableVertexAttribArray(2);
+  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, tex_coord));
+
+  glBindVertexArray(0);
+  cgltf_free(data);
+  return mesh;
+}
+
+bool Vertex::operator==(const Vertex& other) const
+{
+  return Self.position == other.position && Self.normal == other.normal && Self.tex_coord == other.tex_coord;
 }
 
 }  // namespace nycatech

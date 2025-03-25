@@ -6,6 +6,8 @@
 #define NYCA_TECH_MESH_H
 
 #include <array>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/hash.hpp>
 #include <utility>
 
 #include "transform.h"
@@ -17,32 +19,35 @@ struct Vertex {
   Vec3 normal;
   Vec2 tex_coord;
 
-  explicit Vertex(Vec3 position = {}, Vec3 normal = {}, Vec2 tex_coord = {})
-      : position(position), normal(normal), tex_coord(tex_coord) {}
+  bool operator==(const Vertex& other) const;
+
+  Vertex(Vec3 position = {}, Vec3 normal = {}, Vec2 tex_coord = {})
+      : position(position), normal(normal), tex_coord(tex_coord)
+  {
+  }
+};
+}  // namespace nycatech
+
+template <>
+struct ::std::hash<nycatech::Vertex> {
+  size_t operator()(const nycatech::Vertex& v) const
+  {
+    using namespace nycatech;
+    return ((hash<Vec3>()(v.position) ^ (hash<Vec3>()(v.normal) << 1)) >> 1) ^ (hash<Vec2>()(v.tex_coord) << 1);
+  }
 };
 
-struct MeshComponent : public Component {
-  explicit MeshComponent(String name) : name(move(name)) {}
-  String name;
-};
+namespace nycatech {
 
-struct Mesh {
+struct Mesh : public Component {
   Vector<Vertex> vertices;
-  Uint32 vao = 0;
-  Uint32 vbo = 0;
-};
+  Vector<Uint32> indices;
+  Uint32         vao = 0;
+  Uint32         vbo = 0;
+  Uint32         ebo = 0;
 
-class MeshFactory {
- public:
-  static MeshFactory& instance();
-
- public:
-  SmartPtr<Mesh> from_file(const String& name, const String& path);
-  SmartPtr<Mesh> from_string(const String& name, const String& content);
-  SmartPtr<Mesh> get(const String& name);
-
- public:
-  Map<String, SmartPtr<Mesh>> meshes;
+  static SmartPtr<Mesh> from_file(const String& file);
+  static SmartPtr<Mesh> from_string(const String& content);
 };
 
 }  // namespace nycatech

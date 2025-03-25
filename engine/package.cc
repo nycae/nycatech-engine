@@ -22,7 +22,7 @@ void Package::bundle(const String& file) {
     FileReader in_file(asset_file.c_str(), std::ios::binary);
     StringBuilder buffer;
     buffer << in_file.rdbuf();
-    String data = buffer.str();
+    String data = buffer.str().c_str();
     in_file.close();
     Uint64 size_compressed
         = ZSTD_compressCCtx(ctx, out_buff.data(), out_buff.capacity(), data.data(), data.size(), ZSTD_defaultCLevel());

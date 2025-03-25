@@ -5,78 +5,60 @@
 #ifndef NYCATECH_ENGINE_SHADER_H
 #define NYCATECH_ENGINE_SHADER_H
 
-#include "ecs.h"
-
 #include <glad/glad.h>
+
+#include "ecs.h"
 
 namespace nycatech {
 
-class Shader {
- public:
+struct Shader {
   enum Type : Uint32 {
     Vertex = GL_VERTEX_SHADER,
     Fragment = GL_FRAGMENT_SHADER,
   };
 
-  Type type;
+  Type   type;
   String source;
   Uint64 id = 0;
-
-  Shader(Type type = Type::Vertex) : type(type) {}
 };
 
-class ShaderProgram {
- public:
-  Uint64 id;
+struct ShaderProgram : public Component {
+  Uint64                   id;
   Vector<SmartPtr<Shader>> shaders;
 };
 
-struct ShaderComponent : public Component {
-  String name;
-  ShaderComponent(String name) : name(move(name)) {}
-};
-
 class ShaderFactory {
- public:
-  static ShaderFactory& instance();
-
+public:
   class ShaderBuilder {
-   public:
-    ShaderBuilder() : inner(make_shared<Shader>()) {}
-    ShaderBuilder& from_file(const String& path);
-    ShaderBuilder& from_string(String content);
-    ShaderBuilder& with_type(Shader::Type type);
-    ShaderBuilder& with_name(String);
+  public:
+    ShaderBuilder&   from_file(const String& path);
+    ShaderBuilder&   from_string(const String& content);
+    ShaderBuilder&   with_type(Shader::Type type);
+    ShaderBuilder&   with_name(const String& name);
     SmartPtr<Shader> build();
 
-   private:
-    String name;
-    SmartPtr<Shader> inner;
+  private:
+    String           name;
+    SmartPtr<Shader> inner = make_shared<Shader>();
   };
 
   class ProgramBuilder {
-   public:
-    ProgramBuilder() : inner(make_shared<ShaderProgram>()) {}
-    ProgramBuilder& with_shader(SmartPtr<Shader> shader);
-    ProgramBuilder& with_name(String name);
+  public:
+    ProgramBuilder&         with_shader(SmartPtr<Shader> shader);
+    ProgramBuilder&         with_name(const String& name);
     SmartPtr<ShaderProgram> build();
 
-   public:
-    String name;
-    SmartPtr<ShaderProgram> inner;
+  public:
+    String                  name;
+    SmartPtr<ShaderProgram> inner = make_shared<ShaderProgram>();
   };
 
- private:
+private:
   ShaderFactory() = default;
 
- public:
-  ProgramBuilder create_program();
-  ShaderBuilder create_shader();
-  SmartPtr<ShaderProgram> get(const String& name);
-
- public:
-  Map<String, SmartPtr<Shader>> shaders;
-  Map<String, SmartPtr<ShaderProgram>> shader_programs;
+public:
+  static ProgramBuilder create_program();
+  static ShaderBuilder  create_shader();
 };
 
 }  // namespace nycatech

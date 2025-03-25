@@ -7,6 +7,7 @@
 
 #define _USE_MATH_DEFINES
 
+#include <algorithm>
 #include <array>
 #include <boost/asio/post.hpp>
 #include <boost/asio/thread_pool.hpp>
@@ -14,6 +15,7 @@
 #include <cstdint>
 #include <exception>
 #include <fstream>
+#include <glm/glm.hpp>
 #include <sstream>
 #include <string>
 #include <system_error>
@@ -39,6 +41,7 @@ using std::make_shared;
 using std::make_tuple;
 using std::min;
 using std::move;
+using std::replace;
 using std::static_pointer_cast;
 
 using Uint8 = uint8_t;
@@ -63,6 +66,9 @@ template <typename T, typename K>
 using Pair = std::pair<T, K>;
 
 template <typename T>
+using SystemVector = std::vector<T>;
+
+template <typename T>
 using Vector = std::vector<T>;
 
 template <typename T>
@@ -83,60 +89,11 @@ using Array = std::array<T, size>;
 template <typename... Ts>
 using Tuple = std::tuple<Ts...>;
 
-typedef Array<Float32, 3> Vec3;
-typedef Array<Float32, 2> Vec2;
-
-template <Uint64 H, Uint64 W>
-class Matrix {
- public:
-  Matrix(const Array<Float32, H * W>& init = {}) : inner(init) {};
-
-  static constexpr Matrix identity() {
-    Matrix matrix;
-    for (auto i = 0ul; i < min(H, W); i++)
-      matrix.at(i, i) = 1;
-    return matrix;
-  }
-
-  Float32& at(Uint64 i, Uint64 j) { return inner.at(i * W + j); };
-
-  const Float32& at(Uint64 i, Uint64 j) const { return inner.at(i * W + j); };
-
-  Matrix& operator=(const Matrix& other) = default;
-
-  Matrix operator+(const Matrix& other) {
-    Matrix m;
-    for (auto i = 0ul; i < W; i++) {
-      for (auto j = 0ul; j < H; j++) {
-        m.at(i, j) = Self.at(i, j) + other.at(i, j);
-      }
-    }
-    return m;
-  };
-
-  template <Uint64 I, Uint64 J>
-  Matrix<H, J> operator*(const Matrix<I, J>& other) {
-    static_assert(W == I);
-    Matrix<H, J> m;
-    for (auto i = 0ul; i < H; i++) {
-      for (auto j = 0ul; j < J; j++) {
-        for (auto k = 0ul; k < I; k++) {
-          m.at(i, j) += Self.at(i, k) * other.at(k, j);
-        }
-      }
-    }
-    return m;
-  }
-
- public:
-  Array<Float32, H * W> inner;
-};
-
-Vec3 normalize(const Vec3& v);
-Vec3 cross(const Vec3& a, const Vec3& b);
-float dot(const Vec3& a, const Vec3& b);
-
-using TransformMatrix = Matrix<4, 4>;
+using Mat4 = glm::mat4;
+using Vec4 = glm::vec4;
+using Vec3 = glm::vec3;
+using Vec2 = glm::vec2;
+using Quat = glm::quat;
 
 }  // namespace nycatech
 
