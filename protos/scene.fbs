@@ -14,25 +14,25 @@ table Vector4 {
 }
 
 table Camera {
-  fov: float;
-  aspect_ratio: float;
-  near_plane: float;
-  far_plane: float;
-  is_main_camera: bool;
+  Fov: float;
+  AspectRatio: float;
+  NearPlane: float;
+  FarPlane: float;
+  IsMainCamera: bool;
 }
 
 table Shader {
-  name: string;
+  Name: string;
 }
 
 table Transform {
   position: Vector3;
   rotation: Vector3;
-  scale: Vector3;
+  Scale: Vector3;
 }
 
 table Mesh {
-  name: string;
+  Name: string;
 }
 
 union Component {
@@ -51,7 +51,7 @@ enum System : uint64 {
 }
 
 table Scene {
-  name: string;
+  Name: string;
   entities: [Entity];
   systems: [System];
 }

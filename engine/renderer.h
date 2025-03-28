@@ -12,47 +12,51 @@
 #include <SDL3/SDL.h>
 
 #include "base.h"
-#include "mesh.h"
 #include "shader.h"
-#include "texture.h"
+#include "transform.h"
 
 namespace nycatech {
 
-struct Camera final : public Component {
-  Mat4 projection_matrix() const;
-
-  Camera(float fov = 90.0f,
-         float aspect_ratio = 1600.0f / 900.0f,
-         float near_plane = 0.1f,
-         float far_plane = 1000.0f,
-         bool  is_main_camera = false)
-      : fov(fov),
-        aspect_ratio(aspect_ratio),
-        near_plane(near_plane),
-        far_plane(far_plane),
-        is_main_camera(is_main_camera)
-  {
-  }
-
-  float fov = 90.0f;
-  float aspect_ratio = 1600.0f / 900.0f;
-  float near_plane = 0.1f;
-  float far_plane = 1000.0f;
-  bool  is_main_camera = false;
+struct Mesh {
+  Uint32 Vao, Vbo, Ebo;
+  Uint32 Texture;
+  Int32  IndexCount;
 };
 
-class Renderer final : public System {
+struct Model {
+  Vector<Mesh> Meshes;
+  static Model FromString(const String& Content);
+  static Model FromFile(const String& Path);
+};
+
+struct Camera {
+  Mat4 ProjectionMatrix() const;
+  Mat4 ViewMatrix() const;
+
+  Camera() = default;
+
+  Float32 Fov = 90.0f;
+  Float32 AspectRatio = 1600.0f / 900.0f;
+  Float32 NearPlane = 0.1f;
+  Float32 FarPlane = 100.0f;
+
+  Transform Transform{ Vec3{ 0, 0, 2 } };
+};
+
+class Renderer final {
 public:
   Renderer();
   ~Renderer();
 
 public:
-  virtual void tick(World &world, Float32 time_delta) override;
+  void Render(const Vector<Model>& Models);
 
 public:
-  SDL_Window   *window;
-  SDL_Surface  *surface;
-  SDL_GLContext context;
+  SDL_Window*   Window;
+  SDL_Surface*  Surface;
+  SDL_GLContext Context;
+  ShaderProgram ModelShader;
+  Camera        MainCamera;
 };
 
 }  // namespace nycatech

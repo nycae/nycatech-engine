@@ -6,21 +6,21 @@
 #define NYCA_TECH_TRANSFORM_H
 
 #include "base.h"
-#include "ecs.h"
 
 namespace nycatech {
 
-struct Transform : public Component {
+struct Transform {
   Transform(Vec3 position = {}, Vec3 rotation = {}, Vec3 scale = { 1.f, 1.f, 1.f });
 
-  float* data();
-  Mat4   view_matrix();
+  Float32* Data();
+  const Float32* Data() const;
+  Mat4   ViewMatrix();
 
-  void translate(Vec3 pos);
-  void rotate(Vec3 rot);
-  void scale(Vec3 scale);
+  void Translate(Vec3 pos);
+  void Rotate(Vec3 rot);
+  void Scale(Vec3 scale);
 
-  Mat4 transform_matrix;
+  Mat4 TransformMatrix;
 };
 
 }  // namespace nycatech

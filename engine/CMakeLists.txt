@@ -7,19 +7,11 @@ find_package(Stb REQUIRED)
 
 add_library(
   nycatech
-    config.cc
-    ecs.cc
     engine.cc
-    material.cc
-    mesh.cc
-    package.cc
     renderer.cc
-    scene.cc
     transform.cc
-    math.cc
     shader.cc
-    texture.cc
-    cgltf.cc
+    gltf_loader.cc
 )
 
 target_include_directories(
@@ -41,3 +33,5 @@ target_link_libraries(
       protos
       glm::glm
 )
+
+target_compile_definitions(nycatech PRIVATE $<$<CONFIG:Debug>:DEBUG>)

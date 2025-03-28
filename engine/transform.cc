@@ -9,39 +9,44 @@
 
 namespace nycatech {
 
-void Transform::translate(Vec3 pos)
+void Transform::Translate(Vec3 pos)
 {
-  transform_matrix = glm::translate(transform_matrix, pos);
+  TransformMatrix = glm::translate(TransformMatrix, pos);
 }
 
-void Transform::rotate(Vec3 rot)
+void Transform::Rotate(Vec3 rot)
 {
-  transform_matrix = glm::rotate(transform_matrix, glm::radians(rot.x), Vec3(1.0f, 0.0f, 0.0f));
-  transform_matrix = glm::rotate(transform_matrix, glm::radians(rot.y), Vec3(0.0f, 1.0f, 0.0f));
-  transform_matrix = glm::rotate(transform_matrix, glm::radians(rot.z), Vec3(0.0f, 0.0f, 1.0f));
+  TransformMatrix = glm::rotate(TransformMatrix, glm::radians(rot.x), Vec3(1.0f, 0.0f, 0.0f));
+  TransformMatrix = glm::rotate(TransformMatrix, glm::radians(rot.y), Vec3(0.0f, 1.0f, 0.0f));
+  TransformMatrix = glm::rotate(TransformMatrix, glm::radians(rot.z), Vec3(0.0f, 0.0f, 1.0f));
 }
 
-void Transform::scale(Vec3 scale)
+void Transform::Scale(Vec3 scale)
 {
-  transform_matrix = glm::scale(transform_matrix, scale);
+  TransformMatrix = glm::scale(TransformMatrix, scale);
 }
 
 Transform::Transform(Vec3 position, Vec3 rotation, Vec3 scale)
-    : transform_matrix(Mat4(1.0f))
+    : TransformMatrix(Mat4(1.0f))
 {
-  Self.scale(scale);
-  Self.rotate(rotation);
-  Self.translate(position);
+  Self.Scale(scale);
+  Self.Rotate(rotation);
+  Self.Translate(position);
 }
 
-Mat4 Transform::view_matrix()
+Mat4 Transform::ViewMatrix()
 {
-  return glm::inverse(transform_matrix);
+  return glm::inverse(TransformMatrix);
 }
 
-float* Transform::data()
+float* Transform::Data()
 {
-  return glm::value_ptr(transform_matrix);
+  return glm::value_ptr(TransformMatrix);
+}
+
+const Float32* Transform::Data() const
+{
+  return Data();
 }
 
 }  // namespace nycatech

@@ -45,6 +45,7 @@ using std::replace;
 using std::static_pointer_cast;
 
 using Uint8 = uint8_t;
+using Byte = Uint8;
 using Uint16 = uint16_t;
 using Uint32 = uint32_t;
 using Uint64 = uint64_t;
@@ -59,7 +60,6 @@ using StringBuilder = std::stringstream;
 using StringReader = std::istringstream;
 using FileWritter = std::ofstream;
 using FileReader = std::ifstream;
-using Type = Uint64;
 using ThreadPool = boost::asio::thread_pool;
 
 template <typename T, typename K>

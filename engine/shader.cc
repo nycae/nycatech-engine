@@ -4,76 +4,71 @@
 
 #include "shader.h"
 
+#include "base.h"
+
 namespace nycatech {
 
-ShaderFactory::ShaderBuilder& ShaderFactory::ShaderBuilder::from_file(const String& path)
+ShaderFactory::ShaderBuilder& ShaderFactory::ShaderBuilder::FromFile(const String& Path)
 {
-  FileReader file(path.c_str());
-  String     file_content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-  return from_string(file_content);
+  FileReader File(Path);
+  String     FileContent((std::istreambuf_iterator<char>(File)), std::istreambuf_iterator<char>());
+  return FromString(FileContent);
 }
 
-ShaderFactory::ShaderBuilder& ShaderFactory::ShaderBuilder::from_string(const String& content)
+ShaderFactory::ShaderBuilder& ShaderFactory::ShaderBuilder::FromString(const String& Content)
 {
-  inner->source = content;
+  Source = Content;
   return Self;
 }
 
-SmartPtr<Shader> ShaderFactory::ShaderBuilder::build()
+Shader ShaderFactory::ShaderBuilder::Build()
 {
-  const char* source = inner->source.c_str();
-  inner->id = glCreateShader(inner->type);
-  glShaderSource(inner->id, 1, &source, nullptr);
-  glCompileShader(inner->id);
-  GLint success;
-  glGetShaderiv(inner->id, GL_COMPILE_STATUS, &success);
-  inner->source.clear();
-  return success ? inner : nullptr;
+  Shader      Shader{ .Id = glCreateShader(ShaderType) };
+  const char* ShaderSource = Source.c_str();
+  glShaderSource(Shader.Id, 1, &ShaderSource, nullptr);
+  glCompileShader(Shader.Id);
+#ifdef DEBUG
+  GLint Success;
+  glGetShaderiv(Shader.Id, GL_COMPILE_STATUS, &Success);
+  assert(Success);
+#endif
+  return Shader;
 }
 
-ShaderFactory::ShaderBuilder& ShaderFactory::ShaderBuilder::with_type(Shader::Type type)
+ShaderFactory::ShaderBuilder& ShaderFactory::ShaderBuilder::WithType(Uint32 Type)
 {
-  inner->type = type;
+  ShaderType = Type;
   return Self;
 }
 
-ShaderFactory::ShaderBuilder& ShaderFactory::ShaderBuilder::with_name(const String& new_name)
-{
-  Self.name = new_name;
-  return Self;
-}
-
-ShaderFactory::ProgramBuilder ShaderFactory::create_program()
+ShaderFactory::ProgramBuilder ShaderFactory::CreateProgram()
 {
   return ShaderFactory::ProgramBuilder();
 }
 
-ShaderFactory::ShaderBuilder ShaderFactory::create_shader()
+ShaderFactory::ShaderBuilder ShaderFactory::CreateShader()
 {
   return ShaderFactory::ShaderBuilder();
 }
 
-SmartPtr<ShaderProgram> ShaderFactory::ProgramBuilder::build()
+ShaderProgram ShaderFactory::ProgramBuilder::Build()
 {
-  inner->id = glCreateProgram();
-  for (const auto &shader : inner->shaders) {
-    glAttachShader(inner->id, shader->id);
+  ShaderProgram Program{ .Id = glCreateProgram() };
+  for (const auto& Shader : Shaders) {
+    glAttachShader(Program.Id, Shader.Id);
   }
-  glLinkProgram(inner->id);
-  GLint success;
-  glGetProgramiv(inner->id, GL_LINK_STATUS, &success);
-  return success ? inner : nullptr;
+  glLinkProgram(Program.Id);
+#ifdef DEBUG
+  GLint Success;
+  glGetProgramiv(Program.Id, GL_LINK_STATUS, &Success);
+  assert(Success);
+#endif
+  return Program;
 }
 
-ShaderFactory::ProgramBuilder& ShaderFactory::ProgramBuilder::with_shader(SmartPtr<Shader> shader)
+ShaderFactory::ProgramBuilder& ShaderFactory::ProgramBuilder::WithShader(Shader Shader)
 {
-  inner->shaders.push_back(shader);
-  return Self;
-}
-
-ShaderFactory::ProgramBuilder& ShaderFactory::ProgramBuilder::with_name(const String& new_name)
-{
-  Self.name = new_name;
+  Shaders.push_back(std::move(Shader));
   return Self;
 }
 

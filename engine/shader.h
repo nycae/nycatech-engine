@@ -7,58 +7,48 @@
 
 #include <glad/glad.h>
 
-#include "ecs.h"
+#include "base.h"
 
 namespace nycatech {
 
 struct Shader {
-  enum Type : Uint32 {
-    Vertex = GL_VERTEX_SHADER,
-    Fragment = GL_FRAGMENT_SHADER,
-  };
-
-  Type   type;
-  String source;
-  Uint64 id = 0;
+  Uint64 Id = 0;
+  Uint32 ShaderType = 0;
 };
 
-struct ShaderProgram : public Component {
-  Uint64                   id;
-  Vector<SmartPtr<Shader>> shaders;
+struct ShaderProgram {
+  Uint64 Id;
 };
 
 class ShaderFactory {
 public:
   class ShaderBuilder {
   public:
-    ShaderBuilder&   from_file(const String& path);
-    ShaderBuilder&   from_string(const String& content);
-    ShaderBuilder&   with_type(Shader::Type type);
-    ShaderBuilder&   with_name(const String& name);
-    SmartPtr<Shader> build();
+    ShaderBuilder& FromFile(const String& Path);
+    ShaderBuilder& FromString(const String& Content);
+    ShaderBuilder& WithType(Uint32 Type);
+    Shader         Build();
 
   private:
-    String           name;
-    SmartPtr<Shader> inner = make_shared<Shader>();
+    Uint32 ShaderType;
+    String Source;
   };
 
   class ProgramBuilder {
   public:
-    ProgramBuilder&         with_shader(SmartPtr<Shader> shader);
-    ProgramBuilder&         with_name(const String& name);
-    SmartPtr<ShaderProgram> build();
+    ProgramBuilder& WithShader(Shader Shader);
+    ShaderProgram   Build();
 
   public:
-    String                  name;
-    SmartPtr<ShaderProgram> inner = make_shared<ShaderProgram>();
+    Vector<Shader> Shaders;
   };
 
 private:
   ShaderFactory() = default;
 
 public:
-  static ProgramBuilder create_program();
-  static ShaderBuilder  create_shader();
+  static ProgramBuilder CreateProgram();
+  static ShaderBuilder  CreateShader();
 };
 
 }  // namespace nycatech
