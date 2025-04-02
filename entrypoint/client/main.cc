@@ -4,7 +4,7 @@
 
 int main(int argc, char *argv[]) {
   nycatech::Application app;
-  app.run();
+  app.Run();
 
   return 0;
 }

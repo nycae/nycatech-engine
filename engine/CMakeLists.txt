@@ -12,6 +12,7 @@ add_library(
     transform.cc
     shader.cc
     gltf_loader.cc
+    resource_manager.cc
 )
 
 target_include_directories(

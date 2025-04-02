@@ -2,8 +2,7 @@
 // Created by rplaz on 2025-01-30.
 //
 
-#ifndef NYCA_TECH_RENDERER_H
-#define NYCA_TECH_RENDERER_H
+#pragma once
 
 #include <array>
 
@@ -17,16 +16,39 @@
 
 namespace nycatech {
 
+struct Lights {
+  enum Type : int { Directional = 0, Point = 1, Spot = 2 };
+  struct Light {
+    Vec3    Position;
+    Vec3    Color;
+    Float32 Intensity;
+    Float32 Range;
+    Type    Type;
+  };
+
+  void Add(const Light& Light);
+
+  Vector<Vec3>    Positions;
+  Vector<Vec3>    Colors;
+  Vector<Float32> Intensities;
+  Vector<Float32> Ranges;
+  Vector<Type>    Types;
+
+};
+
 struct Mesh {
   Uint32 Vao, Vbo, Ebo;
   Uint32 Texture;
   Int32  IndexCount;
+
+  void Unload();
 };
 
 struct Model {
   Vector<Mesh> Meshes;
-  static Model FromString(const String& Content);
-  static Model FromFile(const String& Path);
+
+  static void FromString(const String& Content, Model& Model);
+  static void FromFile(const String& Path, Model& Model);
 };
 
 struct Camera {
@@ -49,6 +71,7 @@ public:
   ~Renderer();
 
 public:
+  void AddLight(const Lights& LightSources);
   void Render(const Vector<Model>& Models);
 
 public:
@@ -60,5 +83,3 @@ public:
 };
 
 }  // namespace nycatech
-
-#endif  // NYCA_TECH_RENDERER_H

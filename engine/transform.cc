@@ -34,7 +34,7 @@ Transform::Transform(Vec3 position, Vec3 rotation, Vec3 scale)
   Self.Translate(position);
 }
 
-Mat4 Transform::ViewMatrix()
+Mat4 Transform::ViewMatrix() const
 {
   return glm::inverse(TransformMatrix);
 }

@@ -2,8 +2,7 @@
 // Created by rplaz on 2025-03-15.
 //
 
-#ifndef NYCATECH_ENGINE_SHADER_H
-#define NYCATECH_ENGINE_SHADER_H
+#pragma once
 
 #include <glad/glad.h>
 
@@ -52,5 +51,3 @@ public:
 };
 
 }  // namespace nycatech
-
-#endif  // NYCATECH_ENGINE_SHADER_H

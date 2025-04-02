@@ -2,27 +2,26 @@
 // Created by rplaz on 2025-01-30.
 //
 
-#ifndef NYCA_TECH_ENGINE_H
-#define NYCA_TECH_ENGINE_H
+#pragma once
 
 #include "renderer.h"
+#include "resource_manager.h"
 
 namespace nycatech {
 
 class Application {
 public:
   Application();
-  ~Application();
+  ~Application() = default;
 
-  void run();
+  void Run();
 
 private:
-  ThreadPool tp;
-  SDL_Event  event;
-  Model      Model;
-  Renderer   Renderer;
+  ThreadPool      Tp;
+  SDL_Event       event;
+  Renderer        Renderer;
+  Lights          LightSources;
+  ResourceManager ResourceManager;
 };
 
 }  // namespace nycatech
-
-#endif  // NYCA_TECH_ENGINE_H

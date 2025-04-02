@@ -45,8 +45,9 @@ void Renderer::Render(const Vector<Model>& Models)
   glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glUseProgram(ModelShader.Id);
-  glUniformMatrix4fv(glGetUniformLocation(ModelShader.Id, "CameraProjection"), 1, GL_FALSE, glm::value_ptr(MainCamera.ProjectionMatrix()));
-  glUniformMatrix4fv(glGetUniformLocation(ModelShader.Id, "CameraTransform"), 1, GL_FALSE, glm::value_ptr(MainCamera.Transform.ViewMatrix()));
+  glUniformMatrix4fv(glGetUniformLocation(ModelShader.Id, "CameraProjection"),
+                     1,GL_FALSE,glm::value_ptr(MainCamera.ProjectionMatrix()));
+  glUniformMatrix4fv(glGetUniformLocation(ModelShader.Id, "CameraTransform"), 1, GL_FALSE, glm::value_ptr(MainCamera.ViewMatrix()));
   for (const auto& Model : Models) {
     for (const auto& Mesh : Model.Meshes) {
       const auto Transform = glm::identity<Mat4>();
@@ -61,6 +62,24 @@ void Renderer::Render(const Vector<Model>& Models)
   SDL_GL_SwapWindow(Window);
 }
 
+void Renderer::AddLight(const Lights& LightSources)
+{
+  glUniform1i(glGetUniformLocation(ModelShader.Id, "LightCount"), LightSources.Colors.size());
+  for (Int32 i = 0; i < LightSources.Colors.size(); i++) {
+    const String Prefix = "Lights[" + std::to_string(i) + "]";
+    const auto& Position = LightSources.Positions[i];
+    const auto& Color = LightSources.Colors[i];
+    const auto& Intensity = LightSources.Intensities[i];
+    const auto& Range = LightSources.Ranges[i];
+    const auto& Type = LightSources.Types[i];
+    glUniform3fv(glGetUniformLocation(ModelShader.Id, (Prefix + ".Position").c_str()),1, glm::value_ptr(Position));
+    glUniform3fv(glGetUniformLocation(ModelShader.Id, (Prefix + ".Color").c_str()),1, glm::value_ptr(Color));
+    glUniform1f(glGetUniformLocation(ModelShader.Id, (Prefix + ".Intensity").c_str()),Intensity);
+    glUniform1f(glGetUniformLocation(ModelShader.Id, (Prefix + ".Range").c_str()),Range);
+    glUniform1i(glGetUniformLocation(ModelShader.Id, (Prefix + ".Type").c_str()), Type);
+  }
+}
+
 Mat4 Camera::ProjectionMatrix() const
 {
   return glm::perspective(glm::radians(Fov), AspectRatio, NearPlane, FarPlane);
@@ -68,17 +87,17 @@ Mat4 Camera::ProjectionMatrix() const
 
 Mat4 Camera::ViewMatrix() const
 {
-  return glm::inverse(Transform.TransformMatrix);
+  return Self.Transform.ViewMatrix();
 }
 
-Model Model::FromFile(const String& Path)
+void Model::FromFile(const String& Path, Model& Model)
 {
   FileReader File(Path, std::ios::binary);
   String     FileContent((std::istreambuf_iterator<char>(File)), std::istreambuf_iterator<char>());
-  return FromString(FileContent);
+  return FromString(FileContent, Model);
 }
 
-Model Model::FromString(const String& Content)
+void Model::FromString(const String& Content, Model& Model)
 {
   tinygltf::Model    GlbModel;
   tinygltf::TinyGLTF Loader;
@@ -87,7 +106,7 @@ Model Model::FromString(const String& Content)
   assert(Loader.LoadBinaryFromMemory(&GlbModel, &Err, &Warn, (const Byte*)Content.data(), Content.size(), ""));
   assert(Warn.empty());
   assert(Err.empty());
-  Model Model;
+
   for (const auto& GlbMesh : GlbModel.meshes) {
     for (const auto& Primitive : GlbMesh.primitives) {
       Model.Meshes.push_back(Mesh{});
@@ -145,7 +164,8 @@ Model Model::FromString(const String& Content)
 
       glGenTextures(1, &Mesh.Texture);
       glBindTexture(GL_TEXTURE_2D, Mesh.Texture);
-      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, Image.width, Image.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, Image.image.data());
+      glTexImage2D(
+          GL_TEXTURE_2D, 0, GL_RGBA, Image.width, Image.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, Image.image.data());
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -153,7 +173,21 @@ Model Model::FromString(const String& Content)
       glGenerateMipmap(GL_TEXTURE_2D);
     }
   }
-  return Model;
+}
+
+void Mesh::Unload()
+{
+  const auto buffers = Array<Uint32, 3>{ Vao, Vbo, Ebo };
+  glDeleteBuffers(3, buffers.data());
+}
+
+void Lights::Add(const Lights::Light& Light)
+{
+  Types.push_back(Light.Type);
+  Positions.push_back(Light.Position);
+  Colors.push_back(Light.Color);
+  Intensities.push_back(Light.Intensity);
+  Ranges.push_back(Light.Range);
 }
 
 }  // namespace nycatech

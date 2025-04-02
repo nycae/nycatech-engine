@@ -2,8 +2,7 @@
 // Created by rplaz on 2025-02-01.
 //
 
-#ifndef NYCA_TECH_TRANSFORM_H
-#define NYCA_TECH_TRANSFORM_H
+#pragma once
 
 #include "base.h"
 
@@ -12,9 +11,9 @@ namespace nycatech {
 struct Transform {
   Transform(Vec3 position = {}, Vec3 rotation = {}, Vec3 scale = { 1.f, 1.f, 1.f });
 
-  Float32* Data();
+  Float32*       Data();
   const Float32* Data() const;
-  Mat4   ViewMatrix();
+  Mat4           ViewMatrix() const;
 
   void Translate(Vec3 pos);
   void Rotate(Vec3 rot);
@@ -24,5 +23,3 @@ struct Transform {
 };
 
 }  // namespace nycatech
-
-#endif  // NYCA_TECH_TRANSFORM_H
