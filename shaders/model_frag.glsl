@@ -20,27 +20,37 @@ uniform int LightCount;
 
 out vec4 FragColor;
 
-vec3 CalculateLight(Light light, vec3 normal, vec3 fragPos, vec3 viewDir) {
+vec3 CalculateLight(Light light, vec3 normal, vec3 fragPos) {
+  vec3 lightDir = (light.Type == 0)
+    ? normalize(-light.Position)
+    : normalize(light.Position - fragPos);
+  float diff = dot(normal, lightDir) * 0.5 + 0.5;
   float attenuation = 1.0;
   if (light.Type == 1) {
     float distance = length(light.Position - fragPos);
-    attenuation = 1.0 / (1.0 + 0.1 * distance + 0.01 * distance * distance);
+    attenuation = clamp(1.0 - distance / light.Range, 0.0, 1.0);// Linear falloff
   }
-
-  vec3 lightDir = normalize(light.Position - fragPos);
-  float diff = max(dot(normal, lightDir), 0.0);
-  vec3 diffuse = diff * light.Color * light.Intensity;
-
-  return diffuse * attenuation;
+  return diff * light.Color * light.Intensity * attenuation;
+//  float attenuation = 1.0;
+//  if (light.Type == 1) {
+//    float distance = length(light.Position - fragPos);
+//    attenuation = 1.0 / (1.0 + 0.1 * distance + 0.01 * distance * distance);
+//  }
+//
+//  vec3 lightDir = normalize(light.Position - fragPos);
+//  float diff = max(dot(normal, lightDir), 0.0);
+//  vec3 diffuse = diff * light.Color * light.Intensity;
+//
+//  return diffuse * attenuation;
 }
 
 void main() {
   vec3 norm = normalize(Normal);
-  vec3 viewDir = normalize(ViewPos - FragPos);
-  vec3 result = vec3(0.0);
+  //vec3 viewDir = normalize(ViewPos - FragPos);
+  vec3 result = vec3(0.4, 0.4, 0.5);
 
   for (int i = 0; i < LightCount; i++) {
-    result += CalculateLight(Lights[i], norm, FragPos, viewDir);
+    result += CalculateLight(Lights[i], norm, FragPos);
   }
 
   vec4 texColor = texture(Texture, TexCoord);

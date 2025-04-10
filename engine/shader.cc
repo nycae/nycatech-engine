@@ -30,7 +30,13 @@ Shader ShaderFactory::ShaderBuilder::Build()
 #ifdef DEBUG
   GLint Success;
   glGetShaderiv(Shader.Id, GL_COMPILE_STATUS, &Success);
-  assert(Success);
+  if (!Success) {
+    Int32 MaxLength;
+    glGetShaderiv(Shader.Id, GL_COMPILE_STATUS, &MaxLength);
+    String Error(MaxLength, ' ');
+    glGetShaderInfoLog(Shader.Id, MaxLength, &MaxLength, Error.data());
+    assert(Success && Error.c_str());
+  }
 #endif
   return Shader;
 }

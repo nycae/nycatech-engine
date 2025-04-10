@@ -32,6 +32,9 @@ Renderer::Renderer()
   }
 
   gladLoadGL();
+  glEnable(GL_CULL_FACE);
+  glCullFace(GL_BACK);
+  glFrontFace(GL_CCW);
 }
 
 Renderer::~Renderer()
@@ -45,13 +48,14 @@ void Renderer::Render(const Vector<Model>& Models)
   glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glUseProgram(ModelShader.Id);
-  glUniformMatrix4fv(glGetUniformLocation(ModelShader.Id, "CameraProjection"),
-                     1,GL_FALSE,glm::value_ptr(MainCamera.ProjectionMatrix()));
+  glUniformMatrix4fv(glGetUniformLocation(ModelShader.Id, "CameraProjection"),1,GL_FALSE,glm::value_ptr(MainCamera.ProjectionMatrix()));
   glUniformMatrix4fv(glGetUniformLocation(ModelShader.Id, "CameraTransform"), 1, GL_FALSE, glm::value_ptr(MainCamera.ViewMatrix()));
   for (const auto& Model : Models) {
     for (const auto& Mesh : Model.Meshes) {
-      const auto Transform = glm::identity<Mat4>();
-      glUniformMatrix4fv(glGetUniformLocation(ModelShader.Id, "Transform"), 1, GL_FALSE, glm::value_ptr(Transform));
+      Transform Transform;
+//      Transform.Translate({ 0, -0.5, 0 });
+//      Transform.Scale({ 0.1, 0.1, 0.1 });
+      glUniformMatrix4fv(glGetUniformLocation(ModelShader.Id, "Transform"), 1, GL_FALSE, Transform.Data());
       glActiveTexture(GL_TEXTURE0);
       glBindTexture(GL_TEXTURE_2D, Mesh.Texture);
       glUniform1i(glGetUniformLocation(ModelShader.Id, "Texture"), 0);
@@ -67,15 +71,15 @@ void Renderer::AddLight(const Lights& LightSources)
   glUniform1i(glGetUniformLocation(ModelShader.Id, "LightCount"), LightSources.Colors.size());
   for (Int32 i = 0; i < LightSources.Colors.size(); i++) {
     const String Prefix = "Lights[" + std::to_string(i) + "]";
-    const auto& Position = LightSources.Positions[i];
-    const auto& Color = LightSources.Colors[i];
-    const auto& Intensity = LightSources.Intensities[i];
-    const auto& Range = LightSources.Ranges[i];
-    const auto& Type = LightSources.Types[i];
-    glUniform3fv(glGetUniformLocation(ModelShader.Id, (Prefix + ".Position").c_str()),1, glm::value_ptr(Position));
-    glUniform3fv(glGetUniformLocation(ModelShader.Id, (Prefix + ".Color").c_str()),1, glm::value_ptr(Color));
-    glUniform1f(glGetUniformLocation(ModelShader.Id, (Prefix + ".Intensity").c_str()),Intensity);
-    glUniform1f(glGetUniformLocation(ModelShader.Id, (Prefix + ".Range").c_str()),Range);
+    const auto&  Position = LightSources.Positions[i];
+    const auto&  Color = LightSources.Colors[i];
+    const auto&  Intensity = LightSources.Intensities[i];
+    const auto&  Range = LightSources.Ranges[i];
+    const auto&  Type = LightSources.Types[i];
+    glUniform3fv(glGetUniformLocation(ModelShader.Id, (Prefix + ".Position").c_str()), 1, glm::value_ptr(Position));
+    glUniform3fv(glGetUniformLocation(ModelShader.Id, (Prefix + ".Color").c_str()), 1, glm::value_ptr(Color));
+    glUniform1f(glGetUniformLocation(ModelShader.Id, (Prefix + ".Intensity").c_str()), Intensity);
+    glUniform1f(glGetUniformLocation(ModelShader.Id, (Prefix + ".Range").c_str()), Range);
     glUniform1i(glGetUniformLocation(ModelShader.Id, (Prefix + ".Type").c_str()), Type);
   }
 }
@@ -87,7 +91,7 @@ Mat4 Camera::ProjectionMatrix() const
 
 Mat4 Camera::ViewMatrix() const
 {
-  return Self.Transform.ViewMatrix();
+  return glm::lookAt(Vec3(Transform.TransformMatrix[3]), Vec3(0, 0, 0), Vec3(0, 1, 0));
 }
 
 void Model::FromFile(const String& Path, Model& Model)
@@ -109,8 +113,7 @@ void Model::FromString(const String& Content, Model& Model)
 
   for (const auto& GlbMesh : GlbModel.meshes) {
     for (const auto& Primitive : GlbMesh.primitives) {
-      Model.Meshes.push_back(Mesh{});
-      Mesh& Mesh = Model.Meshes.back();
+      auto& Mesh = Model.Meshes.emplace_back();
 
       const auto& PosAccessor = GlbModel.accessors[Primitive.attributes.at("POSITION")];
       const auto& PosView = GlbModel.bufferViews[PosAccessor.bufferView];
@@ -164,8 +167,7 @@ void Model::FromString(const String& Content, Model& Model)
 
       glGenTextures(1, &Mesh.Texture);
       glBindTexture(GL_TEXTURE_2D, Mesh.Texture);
-      glTexImage2D(
-          GL_TEXTURE_2D, 0, GL_RGBA, Image.width, Image.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, Image.image.data());
+      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, Image.width, Image.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, Image.image.data());
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);

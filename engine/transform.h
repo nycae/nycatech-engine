@@ -18,6 +18,7 @@ struct Transform {
   void Translate(Vec3 pos);
   void Rotate(Vec3 rot);
   void Scale(Vec3 scale);
+  void WorldRotate(Vec3 Point, Vec3 Angle);
 
   Mat4 TransformMatrix;
 };

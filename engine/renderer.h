@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include <array>
-
 #define SDL_MAIN_NOIMPL
 #define SDL_MAIN_USE_CALLBACKS
 #include <SDL3/SDL.h>
@@ -17,7 +15,12 @@
 namespace nycatech {
 
 struct Lights {
-  enum Type : int { Directional = 0, Point = 1, Spot = 2 };
+  enum Type : int {
+    Directional = 0,
+    Point = 1,
+    Spot = 2
+  };
+
   struct Light {
     Vec3    Position;
     Vec3    Color;
@@ -33,7 +36,6 @@ struct Lights {
   Vector<Float32> Intensities;
   Vector<Float32> Ranges;
   Vector<Type>    Types;
-
 };
 
 struct Mesh {
@@ -62,7 +64,7 @@ struct Camera {
   Float32 NearPlane = 0.1f;
   Float32 FarPlane = 100.0f;
 
-  Transform Transform{ Vec3{ 0, 0, 2 } };
+  Transform Transform{ Vec3{ 2, 2, 2 } };
 };
 
 class Renderer final {
